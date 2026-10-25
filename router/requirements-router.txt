@@ -1,0 +1,6 @@
+# Router runtime on the Mac CPU (router/embed_local.py). numpy is also needed to train (with scikit-learn).
+onnxruntime>=1.20
+tokenizers>=0.20
+numpy>=2.0
+# fetching the model files once: huggingface_hub
+# training only: scikit-learn>=1.5

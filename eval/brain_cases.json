@@ -1,0 +1,1224 @@
+[
+ {
+  "case_id": "g-keys",
+  "tag": "point",
+  "pack": "general",
+  "text": "where are my keys",
+  "scene": {
+   "caption": "A desk with a mug, a laptop and a set of keys.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "mug",
+     "bbox": [
+      0.1,
+      0.4,
+      0.15,
+      0.2
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "laptop",
+     "bbox": [
+      0.35,
+      0.3,
+      0.4,
+      0.35
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o3",
+     "label": "keys",
+     "bbox": [
+      0.8,
+      0.7,
+      0.1,
+      0.08
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o3"
+   ]
+  }
+ },
+ {
+  "case_id": "g-phone-absent",
+  "tag": "abstain",
+  "pack": "general",
+  "text": "where's my phone",
+  "scene": {
+   "caption": "A desk with a mug, a laptop and a set of keys.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "mug",
+     "bbox": [
+      0.1,
+      0.4,
+      0.15,
+      0.2
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "laptop",
+     "bbox": [
+      0.35,
+      0.3,
+      0.4,
+      0.35
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o3",
+     "label": "keys",
+     "bbox": [
+      0.8,
+      0.7,
+      0.1,
+      0.08
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": []
+  }
+ },
+ {
+  "case_id": "g-mug-followup",
+  "tag": "history",
+  "pack": "general",
+  "text": "and the mug?",
+  "history": [
+   "user: where are my keys",
+   "helper: Your keys are on the right, next to the laptop."
+  ],
+  "scene": {
+   "caption": "A desk with a mug, a laptop and a set of keys.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "mug",
+     "bbox": [
+      0.1,
+      0.4,
+      0.15,
+      0.2
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "laptop",
+     "bbox": [
+      0.35,
+      0.3,
+      0.4,
+      0.35
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o3",
+     "label": "keys",
+     "bbox": [
+      0.8,
+      0.7,
+      0.1,
+      0.08
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o1"
+   ]
+  }
+ },
+ {
+  "case_id": "g-blue-cable",
+  "tag": "point",
+  "pack": "general",
+  "text": "which one is the blue cable",
+  "scene": {
+   "caption": "Two cables lie on a table, one red and one blue.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "red cable",
+     "bbox": [
+      0.1,
+      0.5,
+      0.35,
+      0.1
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o2",
+     "label": "blue cable",
+     "bbox": [
+      0.55,
+      0.45,
+      0.35,
+      0.12
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o2"
+   ]
+  }
+ },
+ {
+  "case_id": "g-label-driver",
+  "tag": "point",
+  "pack": "general",
+  "text": "label the screwdriver for me",
+  "scene": {
+   "caption": "A screwdriver, a pile of screws and a metal bracket.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "screwdriver",
+     "bbox": [
+      0.05,
+      0.2,
+      0.3,
+      0.1
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o2",
+     "label": "screws",
+     "bbox": [
+      0.45,
+      0.6,
+      0.1,
+      0.1
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o3",
+     "label": "metal bracket",
+     "bbox": [
+      0.6,
+      0.25,
+      0.3,
+      0.3
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o1"
+   ]
+  }
+ },
+ {
+  "case_id": "g-screw-goes",
+  "tag": "point",
+  "pack": "general",
+  "text": "show me where the screw goes on the bracket",
+  "scene": {
+   "caption": "A screwdriver, a pile of screws and a metal bracket.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "screwdriver",
+     "bbox": [
+      0.05,
+      0.2,
+      0.3,
+      0.1
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o2",
+     "label": "screws",
+     "bbox": [
+      0.45,
+      0.6,
+      0.1,
+      0.1
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o3",
+     "label": "metal bracket",
+     "bbox": [
+      0.6,
+      0.25,
+      0.3,
+      0.3
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o2",
+    "o3"
+   ]
+  }
+ },
+ {
+  "case_id": "g-thanks",
+  "tag": "chat",
+  "pack": "general",
+  "text": "thanks, that's all for now",
+  "scene": {
+   "caption": "A desk with a mug, a laptop and a set of keys.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "mug",
+     "bbox": [
+      0.1,
+      0.4,
+      0.15,
+      0.2
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "laptop",
+     "bbox": [
+      0.35,
+      0.3,
+      0.4,
+      0.35
+     ],
+     "conf": 0.7
+    }
+   ]
+  },
+  "expect": {
+   "targets": []
+  }
+ },
+ {
+  "case_id": "g-holding",
+  "tag": "describe",
+  "pack": "general",
+  "text": "what am I holding",
+  "scene": {
+   "caption": "A hand holds a yellow multimeter.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "hand",
+     "bbox": [
+      0.3,
+      0.5,
+      0.3,
+      0.4
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o2",
+     "label": "multimeter",
+     "bbox": [
+      0.35,
+      0.3,
+      0.25,
+      0.35
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {}
+ },
+ {
+  "case_id": "g-empty-scene",
+  "tag": "abstain",
+  "pack": "general",
+  "text": "point at the stapler",
+  "scene": {
+   "caption": "A blurry view of a desk.",
+   "ms": 1,
+   "objects": []
+  },
+  "expect": {
+   "targets": []
+  }
+ },
+ {
+  "case_id": "pc-cpu-fan",
+  "tag": "point",
+  "pack": "pc_build",
+  "text": "where does the CPU fan cable go",
+  "scene": {
+   "caption": "A motherboard with a fan cable held above it.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the motherboard",
+     "bbox": [
+      0.05,
+      0.05,
+      0.9,
+      0.9
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "CPU_FAN",
+     "bbox": [
+      0.62,
+      0.12,
+      0.08,
+      0.04
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o3",
+     "label": "SYS_FAN1",
+     "bbox": [
+      0.2,
+      0.8,
+      0.08,
+      0.04
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o4",
+     "label": "the connector",
+     "bbox": [
+      0.7,
+      0.3,
+      0.06,
+      0.05
+     ],
+     "conf": 0.7
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o2",
+    "o4"
+   ]
+  }
+ },
+ {
+  "case_id": "pc-sys-fan",
+  "tag": "point",
+  "pack": "pc_build",
+  "text": "where do I plug the case fan in",
+  "scene": {
+   "caption": "A motherboard with two fan headers visible.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the motherboard",
+     "bbox": [
+      0.05,
+      0.05,
+      0.9,
+      0.9
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "CPU_FAN",
+     "bbox": [
+      0.62,
+      0.12,
+      0.08,
+      0.04
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o3",
+     "label": "SYS_FAN1",
+     "bbox": [
+      0.2,
+      0.8,
+      0.08,
+      0.04
+     ],
+     "conf": 0.7
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o3"
+   ]
+  }
+ },
+ {
+  "case_id": "pc-other-fan",
+  "tag": "history",
+  "pack": "pc_build",
+  "text": "ok, and the other fan header?",
+  "history": [
+   "user: where is CPU_FAN",
+   "helper: CPU_FAN is near the top right; I boxed it."
+  ],
+  "scene": {
+   "caption": "A motherboard with two fan headers visible.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the motherboard",
+     "bbox": [
+      0.05,
+      0.05,
+      0.9,
+      0.9
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "CPU_FAN",
+     "bbox": [
+      0.62,
+      0.12,
+      0.08,
+      0.04
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o3",
+     "label": "SYS_FAN1",
+     "bbox": [
+      0.2,
+      0.8,
+      0.08,
+      0.04
+     ],
+     "conf": 0.7
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o3"
+   ]
+  }
+ },
+ {
+  "case_id": "pc-two-sticks",
+  "tag": "point",
+  "pack": "pc_build",
+  "text": "I have two RAM sticks, which slots do I use",
+  "scene": {
+   "caption": "Four DDR5 slots next to the CPU socket, a RAM stick in hand.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "DDR5_A1",
+     "bbox": [
+      0.6,
+      0.2,
+      0.03,
+      0.4
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "DDR5_A2",
+     "bbox": [
+      0.64,
+      0.2,
+      0.03,
+      0.4
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o3",
+     "label": "DDR5_B1",
+     "bbox": [
+      0.68,
+      0.2,
+      0.03,
+      0.4
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o4",
+     "label": "DDR5_B2",
+     "bbox": [
+      0.72,
+      0.2,
+      0.03,
+      0.4
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o5",
+     "label": "RAM stick",
+     "bbox": [
+      0.2,
+      0.55,
+      0.3,
+      0.08
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o2",
+    "o4",
+    "o5"
+   ]
+  }
+ },
+ {
+  "case_id": "pc-front-panel",
+  "tag": "point",
+  "pack": "pc_build",
+  "text": "where do the front panel wires go",
+  "scene": {
+   "caption": "The lower edge of a motherboard with small pin headers.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the motherboard",
+     "bbox": [
+      0.05,
+      0.05,
+      0.9,
+      0.9
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "F_PANEL",
+     "bbox": [
+      0.75,
+      0.85,
+      0.08,
+      0.05
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o3",
+     "label": "SYS_FAN1",
+     "bbox": [
+      0.2,
+      0.85,
+      0.08,
+      0.04
+     ],
+     "conf": 0.7
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o2"
+   ]
+  }
+ },
+ {
+  "case_id": "pc-front-panel-absent",
+  "tag": "abstain",
+  "pack": "pc_build",
+  "text": "where's the front panel header",
+  "scene": {
+   "caption": "The top half of a motherboard near the CPU socket.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the motherboard",
+     "bbox": [
+      0.05,
+      0.05,
+      0.9,
+      0.9
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "CPU_FAN",
+     "bbox": [
+      0.62,
+      0.12,
+      0.08,
+      0.04
+     ],
+     "conf": 0.7
+    }
+   ]
+  },
+  "expect": {
+   "targets": []
+  }
+ },
+ {
+  "case_id": "pc-gpu-power",
+  "tag": "unsupported",
+  "pack": "pc_build",
+  "text": "where does the GPU power cable plug in",
+  "scene": {
+   "caption": "A motherboard with a graphics card slot and fan headers.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the motherboard",
+     "bbox": [
+      0.05,
+      0.05,
+      0.9,
+      0.9
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "PCIe slot",
+     "bbox": [
+      0.1,
+      0.55,
+      0.6,
+      0.04
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o3",
+     "label": "CPU_FAN",
+     "bbox": [
+      0.62,
+      0.12,
+      0.08,
+      0.04
+     ],
+     "conf": 0.7
+    }
+   ]
+  },
+  "expect": {
+   "targets": []
+  }
+ },
+ {
+  "case_id": "pc-24pin",
+  "tag": "point",
+  "pack": "pc_build",
+  "text": "where does this big wide cable go",
+  "scene": {
+   "caption": "A hand holds a wide 24-pin cable near the board's right edge.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the motherboard",
+     "bbox": [
+      0.05,
+      0.05,
+      0.9,
+      0.9
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "24-pin ATX power header",
+     "bbox": [
+      0.85,
+      0.4,
+      0.05,
+      0.2
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o3",
+     "label": "24-pin cable",
+     "bbox": [
+      0.55,
+      0.45,
+      0.2,
+      0.1
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o2",
+    "o3"
+   ]
+  }
+ },
+ {
+  "case_id": "pc-eps",
+  "tag": "point",
+  "pack": "pc_build",
+  "text": "where does the 8-pin CPU power go",
+  "scene": {
+   "caption": "The top edge of a motherboard with two power headers.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the motherboard",
+     "bbox": [
+      0.05,
+      0.05,
+      0.9,
+      0.9
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "8-pin EPS header",
+     "bbox": [
+      0.15,
+      0.06,
+      0.08,
+      0.04
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o3",
+     "label": "24-pin ATX power header",
+     "bbox": [
+      0.85,
+      0.4,
+      0.05,
+      0.2
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o2"
+   ]
+  }
+ },
+ {
+  "case_id": "pc-m2",
+  "tag": "point",
+  "pack": "pc_build",
+  "text": "where does the SSD go",
+  "scene": {
+   "caption": "A motherboard with an M.2 slot and an NVMe drive beside it.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the motherboard",
+     "bbox": [
+      0.05,
+      0.05,
+      0.9,
+      0.9
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "M.2 slot",
+     "bbox": [
+      0.3,
+      0.5,
+      0.25,
+      0.04
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o3",
+     "label": "NVMe SSD",
+     "bbox": [
+      0.6,
+      0.7,
+      0.25,
+      0.05
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o2",
+    "o3"
+   ]
+  }
+ },
+ {
+  "case_id": "pc-sata",
+  "tag": "point",
+  "pack": "pc_build",
+  "text": "where does the SATA cable plug in on the board",
+  "scene": {
+   "caption": "A row of SATA ports on the board edge and a SATA cable.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the motherboard",
+     "bbox": [
+      0.05,
+      0.05,
+      0.9,
+      0.9
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "SATA ports",
+     "bbox": [
+      0.85,
+      0.65,
+      0.06,
+      0.12
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o3",
+     "label": "SATA cable",
+     "bbox": [
+      0.5,
+      0.7,
+      0.25,
+      0.05
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o2",
+    "o3"
+   ]
+  }
+ },
+ {
+  "case_id": "pc-which-cable",
+  "tag": "point",
+  "pack": "pc_build",
+  "text": "which of these is the fan cable",
+  "scene": {
+   "caption": "Two loose cables on the case floor.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "4-pin fan cable",
+     "bbox": [
+      0.2,
+      0.6,
+      0.15,
+      0.1
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o2",
+     "label": "front panel bundle",
+     "bbox": [
+      0.55,
+      0.6,
+      0.25,
+      0.15
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o1"
+   ]
+  }
+ },
+ {
+  "case_id": "pc-pin1",
+  "tag": "point",
+  "pack": "pc_build",
+  "text": "which side is pin 1 on CPU_FAN",
+  "scene": {
+   "caption": "A close view of the CPU_FAN header.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "CPU_FAN",
+     "bbox": [
+      0.4,
+      0.4,
+      0.2,
+      0.1
+     ],
+     "conf": 0.7
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o1"
+   ]
+  }
+ },
+ {
+  "case_id": "pc-no-shop",
+  "tag": "no_shop",
+  "pack": "pc_build",
+  "text": "does this fan cable go on CPU_FAN",
+  "scene": {
+   "caption": "A fan cable held next to the CPU_FAN header.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "CPU_FAN",
+     "bbox": [
+      0.62,
+      0.12,
+      0.08,
+      0.04
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "the connector",
+     "bbox": [
+      0.7,
+      0.18,
+      0.06,
+      0.05
+     ],
+     "conf": 0.7
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o1",
+    "o2"
+   ]
+  }
+ },
+ {
+  "case_id": "c-oil",
+  "tag": "point",
+  "pack": "cooking",
+  "text": "where's the oil",
+  "scene": {
+   "caption": "A pan on the stove, a knife on a cutting board and a bottle of oil.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the pan",
+     "bbox": [
+      0.1,
+      0.2,
+      0.35,
+      0.3
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "the knife",
+     "bbox": [
+      0.55,
+      0.6,
+      0.25,
+      0.05
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o3",
+     "label": "cutting board",
+     "bbox": [
+      0.5,
+      0.55,
+      0.35,
+      0.25
+     ],
+     "conf": 0.5
+    },
+    {
+     "id": "o4",
+     "label": "oil bottle",
+     "bbox": [
+      0.88,
+      0.15,
+      0.08,
+      0.3
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o4"
+   ]
+  }
+ },
+ {
+  "case_id": "c-knife",
+  "tag": "point",
+  "pack": "cooking",
+  "text": "how should I hold the knife",
+  "scene": {
+   "caption": "A pan on the stove, a knife on a cutting board and a bottle of oil.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the pan",
+     "bbox": [
+      0.1,
+      0.2,
+      0.35,
+      0.3
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "the knife",
+     "bbox": [
+      0.55,
+      0.6,
+      0.25,
+      0.05
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o3",
+     "label": "cutting board",
+     "bbox": [
+      0.5,
+      0.55,
+      0.35,
+      0.25
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": [
+    "o2"
+   ]
+  }
+ },
+ {
+  "case_id": "c-salt-absent",
+  "tag": "abstain",
+  "pack": "cooking",
+  "text": "where's the salt",
+  "scene": {
+   "caption": "A pan on the stove, a knife on a cutting board and a bottle of oil.",
+   "ms": 1,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "the pan",
+     "bbox": [
+      0.1,
+      0.2,
+      0.35,
+      0.3
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o2",
+     "label": "the knife",
+     "bbox": [
+      0.55,
+      0.6,
+      0.25,
+      0.05
+     ],
+     "conf": 0.7
+    },
+    {
+     "id": "o4",
+     "label": "oil bottle",
+     "bbox": [
+      0.88,
+      0.15,
+      0.08,
+      0.3
+     ],
+     "conf": 0.5
+    }
+   ]
+  },
+  "expect": {
+   "targets": []
+  }
+ }
+]

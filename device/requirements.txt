@@ -1,0 +1,8 @@
+# Device client only (the server's requirements.txt is separate).
+websockets>=12
+pillow
+# Optional, per device:
+# sounddevice            # mic and speaker (Pi: sudo apt install libportaudio2)
+# opencv-python-headless<5  # USB camera, video files, on-device person filter (HOG; removed in OpenCV 5)
+# gpiozero               # Pi button and LED (preinstalled on Pi OS)
+# picamera2              # Pi camera module: sudo apt install python3-picamera2 (use --system-site-packages)

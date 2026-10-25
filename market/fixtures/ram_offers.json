@@ -1,0 +1,112 @@
+[
+  {
+    "title": "Fixture DDR5 DIMM 32GB 6000",
+    "retailer": "example-store-1",
+    "price_usd": 40,
+    "shipping_usd": 0,
+    "condition": "new",
+    "url": "https://example.com/fixture/ram/1",
+    "specs": {"ddr_gen": "DDR5", "dimm_format": "DIMM", "ecc": false, "speed_mts": 6000, "capacity_gb": 32, "modules": 2},
+    "source": "fixture",
+    "fetched_at": "2026-10-23T19:00:00Z"
+  },
+  {
+    "title": "Fixture DDR5 DIMM 32GB 7200",
+    "retailer": "example-store-2",
+    "price_usd": 55,
+    "shipping_usd": 10,
+    "condition": "new",
+    "url": "https://example.com/fixture/ram/2",
+    "specs": {"ddr_gen": "DDR5", "dimm_format": "DIMM", "ecc": false, "speed_mts": 7200, "capacity_gb": 32, "modules": 2},
+    "source": "fixture",
+    "fetched_at": "2026-10-23T19:00:00Z"
+  },
+  {
+    "title": "Fixture DDR5 DIMM 64GB 6400",
+    "retailer": "example-store-3",
+    "price_usd": 70,
+    "shipping_usd": 0,
+    "condition": "new",
+    "url": "https://example.com/fixture/ram/3",
+    "specs": {"ddr_gen": "DDR5", "dimm_format": "DIMM", "ecc": false, "speed_mts": 6400, "capacity_gb": 64, "modules": 2},
+    "source": "fixture",
+    "fetched_at": "2026-10-23T19:00:00Z"
+  },
+  {
+    "title": "Fixture DDR5 DIMM missing specs",
+    "retailer": "example-store-4",
+    "price_usd": 15,
+    "shipping_usd": 0,
+    "condition": "new",
+    "url": "https://example.com/fixture/ram/4",
+    "specs": {"ddr_gen": "DDR5", "dimm_format": "DIMM", "capacity_gb": 32, "modules": 2},
+    "source": "fixture",
+    "fetched_at": "2026-10-23T19:00:00Z"
+  },
+  {
+    "title": "Fixture DDR4 DIMM 32GB",
+    "retailer": "example-store-5",
+    "price_usd": 10,
+    "shipping_usd": 0,
+    "condition": "new",
+    "url": "https://example.com/fixture/ram/5",
+    "specs": {"ddr_gen": "DDR4", "dimm_format": "DIMM", "ecc": false, "speed_mts": 3200, "capacity_gb": 32, "modules": 2},
+    "source": "fixture",
+    "fetched_at": "2026-10-23T19:00:00Z"
+  },
+  {
+    "title": "Fixture DDR5 SODIMM 32GB",
+    "retailer": "example-store-6",
+    "price_usd": 12,
+    "shipping_usd": 0,
+    "condition": "new",
+    "url": "https://example.com/fixture/ram/6",
+    "specs": {"ddr_gen": "DDR5", "dimm_format": "SODIMM", "ecc": false, "speed_mts": 5600, "capacity_gb": 32, "modules": 2},
+    "source": "fixture",
+    "fetched_at": "2026-10-23T19:00:00Z"
+  },
+  {
+    "title": "Fixture DDR5 DIMM ECC 32GB",
+    "retailer": "example-store-7",
+    "price_usd": 18,
+    "shipping_usd": 0,
+    "condition": "new",
+    "url": "https://example.com/fixture/ram/7",
+    "specs": {"ddr_gen": "DDR5", "dimm_format": "DIMM", "ecc": true, "buffered": false, "speed_mts": 5600, "capacity_gb": 32, "modules": 2},
+    "source": "fixture",
+    "fetched_at": "2026-10-23T19:00:00Z"
+  },
+  {
+    "title": "Fixture DDR5 DIMM buffered 32GB",
+    "retailer": "example-store-8",
+    "price_usd": 19,
+    "shipping_usd": 0,
+    "condition": "new",
+    "url": "https://example.com/fixture/ram/8",
+    "specs": {"ddr_gen": "DDR5", "dimm_format": "DIMM", "ecc": false, "buffered": true, "speed_mts": 5600, "capacity_gb": 32, "modules": 2},
+    "source": "fixture",
+    "fetched_at": "2026-10-23T19:00:00Z"
+  },
+  {
+    "title": "Fixture DDR5 DIMM 256GB",
+    "retailer": "example-store-9",
+    "price_usd": 21,
+    "shipping_usd": 0,
+    "condition": "new",
+    "url": "https://example.com/fixture/ram/9",
+    "specs": {"ddr_gen": "DDR5", "dimm_format": "DIMM", "ecc": false, "speed_mts": 5600, "capacity_gb": 256, "modules": 2},
+    "source": "fixture",
+    "fetched_at": "2026-10-23T19:00:00Z"
+  },
+  {
+    "title": "Fixture DDR5 DIMM 8 modules",
+    "retailer": "example-store-10",
+    "price_usd": 22,
+    "shipping_usd": 0,
+    "condition": "new",
+    "url": "https://example.com/fixture/ram/10",
+    "specs": {"ddr_gen": "DDR5", "dimm_format": "DIMM", "ecc": false, "speed_mts": 5600, "capacity_gb": 32, "modules": 8},
+    "source": "fixture",
+    "fetched_at": "2026-10-23T19:00:00Z"
+  }
+]

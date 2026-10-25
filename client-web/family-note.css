@@ -1,0 +1,14 @@
+#family-panel { max-width: 32rem; pointer-events: auto; padding: .45rem .7rem; border-radius: 12px; background: #142127ee; color: #f1f5f3; font-size: .85rem; max-height: 65vh; overflow: auto; }
+#family-panel summary { cursor: pointer; }
+#family-panel[open] { position: fixed; z-index: 100; top: 10vh; left: 50%; transform: translateX(-50%); box-sizing: border-box; width: calc(100vw - 2rem); max-height: 75vh; padding: 1rem; box-shadow: 0 8px 40px #0009; }
+#family-proof { white-space: normal; text-align: center; }
+#family-panel label { display: block; margin: .5rem 0; }
+#family-panel input:not([type=checkbox]), #family-panel select { max-width: 100%; width: 100%; padding: .4rem; }
+#family-panel button, #family-panel a { margin: .25rem; padding: .4rem .65rem; }
+#family-panel button:disabled { opacity: .5; }
+#family-preview { line-height: 1.5; }
+#family-reply { white-space: normal; }
+.family-recipient { margin: 0; background: #eef3ef; color: #19372d; font: 18px/1.5 system-ui,sans-serif; }
+.family-recipient main { max-width: 32rem; margin: 8vh auto; padding: 1.5rem; }
+.family-recipient textarea { display: block; box-sizing: border-box; width: 100%; font: inherit; margin: .5rem 0; }
+.family-recipient button { padding: .75rem 1rem; background: #225c48; color: white; border: 0; border-radius: .5rem; font: inherit; }

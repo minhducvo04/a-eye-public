@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>My data · A-eye</title><link rel="stylesheet" href="accounts.css">
+</head>
+<body><main>
+  <a href="agent.html">← Back to A-eye</a>
+  <h1>My data</h1>
+  <p>See your saved memory notes, tags, settings, progress and family notes below. Media and embeddings
+    are listed by file size and excluded from the export. A complete call history is not recorded.</p>
+  <p id="account-status" role="status" aria-live="polite">Loading your data…</p>
+  <div id="data-actions" hidden>
+    <button id="export-data">Export my data</button>
+    <button id="delete-data" class="danger">Delete everything</button>
+    <button id="sign-out">Sign out</button>
+  </div>
+  <p><a href="signin.html">Sign in or choose Guest</a></p>
+  <details><summary>What is stored about me</summary><pre id="stored-data"></pre></details>
+</main><script type="module" src="accounts.js"></script></body>
+</html>

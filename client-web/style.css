@@ -1,0 +1,234 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #0e1116;
+  color: #f2f4f8;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #000;
+}
+
+#camera,
+#overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#camera {
+  object-fit: cover;
+  background: #000;
+}
+
+#overlay {
+  pointer-events: none;
+}
+
+.hud {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding:
+    max(12px, env(safe-area-inset-top))
+    12px
+    max(12px, env(safe-area-inset-bottom));
+  pointer-events: none;
+  max-width: 100%;
+}
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.card {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(14, 17, 22, 0.82);
+  pointer-events: auto;
+}
+
+.card p {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.k {
+  display: inline-block;
+  min-width: 4.5rem;
+  color: #a8b0bd;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.status {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  margin-top: 8px;
+  border-radius: 50%;
+  background: #6b7280;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.45);
+}
+
+.status.on {
+  background: #3ddc97;
+}
+
+.status.off {
+  background: #ff4b4b;
+}
+
+.live-stats {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  color: #c5ccd6;
+  text-shadow: 0 1px 2px #000;
+}
+
+.banner {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 1.15rem;
+  font-weight: 650;
+  line-height: 1.3;
+  text-align: center;
+  overflow-wrap: anywhere;
+  pointer-events: auto;
+}
+
+.banner.hidden {
+  display: none;
+}
+
+.banner.pass {
+  background: #145c32;
+  color: #e9fff3;
+}
+
+.banner.fail {
+  background: #7a1f1f;
+  color: #ffe8e8;
+}
+
+.banner.abstain {
+  background: #3a3f46;
+  color: #d5dae3;
+}
+
+.spacer {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.caption {
+  margin: 0;
+  min-height: 1.4em;
+  font-size: 1.15rem;
+  line-height: 1.35;
+  text-align: center;
+  overflow-wrap: anywhere;
+  text-shadow: 0 1px 2px #000;
+}
+
+.caption.bad {
+  color: #ff6b6b;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  pointer-events: auto;
+}
+
+button,
+.file-btn {
+  flex: 1 1 calc(50% - 8px);
+  min-width: 0;
+  min-height: 48px;
+  margin: 0;
+  padding: 12px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: #2a3140;
+  color: #f2f4f8;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+button:active,
+.file-btn:active {
+  background: #3a4458;
+}
+
+button:disabled {
+  opacity: 0.45;
+}
+
+.file-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.file-btn input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (max-width: 375px) {
+  .card p,
+  .caption,
+  .banner {
+    font-size: 1rem;
+  }
+}

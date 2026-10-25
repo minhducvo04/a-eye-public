@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#000000">
+  <title>A-eye Caregiver</title>
+  <link rel="stylesheet" href="agent.css">
+  <style>
+    html, body { overflow: auto; height: auto; min-height: 100%; background: var(--sheet-bg); }
+    main { max-width: 620px; margin: 0 auto; padding: max(20px, env(safe-area-inset-top)) var(--gutter) 40px; }
+    h1 { margin: 0 0 10px; font-size: clamp(30px, 5vw, 40px); font-weight: 650; letter-spacing: -0.02em; line-height: 1.1; }
+    .lead { color: var(--text-2); font-size: var(--fs-body); line-height: 1.45; max-width: 46ch; }
+    .group .row { min-height: 52px; }
+    .banner { margin: 16px 0 0; padding: 12px 16px; border-radius: 14px; background: rgba(142, 182, 255, 0.12); box-shadow: inset 0 0 0 1px rgba(142, 182, 255, 0.3); color: var(--text); font-size: var(--fs-subhead); line-height: 1.4; }
+    .back { display: inline-block; margin-bottom: 18px; color: var(--helper); font-size: var(--fs-body); text-decoration: none; }
+    .group .row input[type="checkbox"]:not([role="switch"]) { width: 24px; height: 24px; flex: 0 0 auto; accent-color: var(--helper); }
+    .group .row.consent { align-items: flex-start; gap: 12px; justify-content: flex-start; line-height: 1.35; }
+    .item-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .item-row b { font-weight: 600; }
+    .item-row .arrow { color: var(--text-3); margin: 0 6px; }
+    .add { display: flex; gap: 8px; padding: 10px 14px; }
+    .add input { flex: 1; min-width: 0; padding: 10px 12px; border-radius: 12px; border: 0; background: rgba(255, 255, 255, 0.08); }
+    .add button, .save { padding: 10px 16px; border-radius: 12px; background: var(--helper); color: #000; font-weight: 600; }
+    .refused { color: var(--text-3); }
+    .refused small { display: block; color: var(--warn); font-size: var(--fs-caption2); }
+    .save { width: 100%; min-height: 52px; margin-top: 26px; padding: 14px; font-size: var(--fs-body); }
+    .save:disabled { opacity: 0.5; }
+    #saved { margin-top: 10px; text-align: center; color: var(--text-2); font-size: var(--fs-footnote); min-height: 1.2em; }
+    .switch-row b { font-size: var(--fs-body); }
+  </style>
+</head>
+<body>
+  <main>
+    <a id="back-link" class="back" href="agent.html?mode=memory">‹ A-eye</a>
+    <h1>Memory aid</h1>
+    <p class="lead">A-eye can remember where things were put down, so it can answer “where did I leave my keys?”. Set it up together: both of you agree first.</p>
+    <p id="preview" class="banner hidden" role="status">Preview: this server has no memory settings yet, so nothing here is saved.</p>
+
+    <p class="group-title">Consent</p>
+    <div class="group">
+      <label class="row consent"><input id="consent-person" type="checkbox"> <span>I am the person using A-eye, and I agree that it remembers where I put things.</span></label>
+      <label class="row consent"><input id="consent-caregiver" type="checkbox"> <span>I am the caregiver, and I agree to set this up and look after these settings.</span></label>
+    </div>
+    <p class="group-foot">Remembering stays off until both boxes are ticked.</p>
+
+    <p class="group-title">Remembering</p>
+    <div class="group">
+      <label class="row switch-row"><b>Remember where things are</b> <input id="remembering" type="checkbox" role="switch" aria-describedby="remember-foot"></label>
+    </div>
+    <p id="remember-foot" class="group-foot">Turn this off to stop remembering at once. Nothing new is kept while it is off.</p>
+
+    <p class="group-title">Things and their homes</p>
+    <div class="group">
+      <ul id="items" class="items" style="list-style:none;margin:0;padding:0"></ul>
+      <form id="add-item" class="add">
+        <input id="item-text" type="text" placeholder="keys -> blue bowl" aria-label="Thing and its home, for example keys -> blue bowl" autocomplete="off">
+        <button type="submit">Add</button>
+      </form>
+    </div>
+    <p id="item-foot" class="group-foot">Write the thing, an arrow, and where it usually lives.</p>
+
+    <p class="group-title">Rooms it may remember</p>
+    <div id="rooms" class="group"></div>
+    <p class="group-foot">Bedrooms and bathrooms are never remembered.</p>
+
+    <p class="group-title">Keeping</p>
+    <div class="group">
+      <label class="row">Keep for <select id="kept-days" class="voice-pick" aria-label="Days kept">
+        <option value="1">1 day</option><option value="3">3 days</option><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option>
+      </select></label>
+      <p id="retention" class="row dim">Kept 7 days, about 0 MB</p>
+    </div>
+
+    <button type="button" id="save" class="save">Save</button>
+    <p id="saved" role="status"></p>
+  </main>
+  <script type="module" src="caregiver.js"></script>
+</body>
+</html>

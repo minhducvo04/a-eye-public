@@ -1,0 +1,784 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:a-eye:export:v1",
+  "title": "A-eye export v1",
+  "description": "One validated NDJSON row. Privacy annotations are enforced by exporter allowlisting.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/call"
+    },
+    {
+      "$ref": "#/$defs/turn"
+    },
+    {
+      "$ref": "#/$defs/step_progress"
+    },
+    {
+      "$ref": "#/$defs/memory_event"
+    },
+    {
+      "$ref": "#/$defs/tool_call"
+    },
+    {
+      "$ref": "#/$defs/safety_stop"
+    },
+    {
+      "$ref": "#/$defs/proof_counter"
+    }
+  ],
+  "$defs": {
+    "call": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "v": {
+          "type": "integer",
+          "description": "Export schema major version.",
+          "unit": "version",
+          "privacy": "public",
+          "const": 1
+        },
+        "entity": {
+          "type": "string",
+          "description": "Destination table name.",
+          "unit": "label",
+          "privacy": "public",
+          "const": "call"
+        },
+        "id": {
+          "type": "string",
+          "description": "Domain-separated HMAC of stable source identity.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "started": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Call start time. Null means unavailable.",
+          "unit": "UTC RFC3339",
+          "privacy": "personal",
+          "format": "date-time"
+        },
+        "ended": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Call end time; null for unknown or active calls. Null means unavailable.",
+          "unit": "UTC RFC3339",
+          "privacy": "personal",
+          "format": "date-time"
+        },
+        "mode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Task pack or operating mode. Null means unavailable.",
+          "unit": "label",
+          "privacy": "personal"
+        },
+        "private": {
+          "type": "boolean",
+          "description": "Private calls are excluded from export.",
+          "unit": "boolean",
+          "privacy": "personal",
+          "const": false
+        },
+        "user_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "HMAC-SHA256 user pseudonym; never a raw user identifier. Null means unavailable.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "frames": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "audio": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "crops": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "raw_transcripts": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        }
+      },
+      "required": [
+        "v",
+        "entity",
+        "id",
+        "started",
+        "ended",
+        "mode",
+        "private",
+        "user_id"
+      ]
+    },
+    "turn": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "v": {
+          "type": "integer",
+          "description": "Export schema major version.",
+          "unit": "version",
+          "privacy": "public",
+          "const": 1
+        },
+        "entity": {
+          "type": "string",
+          "description": "Destination table name.",
+          "unit": "label",
+          "privacy": "public",
+          "const": "turn"
+        },
+        "id": {
+          "type": "string",
+          "description": "Domain-separated HMAC of stable source identity.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "call_id": {
+          "type": "string",
+          "description": "Pseudonymous parent call id.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "t_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Elapsed time since call start. Null means unavailable.",
+          "unit": "milliseconds",
+          "privacy": "public",
+          "minimum": 0
+        },
+        "role": {
+          "type": "string",
+          "description": "Speaker role.",
+          "unit": "label",
+          "privacy": "personal",
+          "enum": [
+            "user",
+            "assistant",
+            "system",
+            "tool"
+          ]
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Text explicitly reviewed as containing no third-party transcript; otherwise null. Null means unavailable.",
+          "unit": "text",
+          "privacy": "personal"
+        },
+        "router_route": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Selected router route. Null means unavailable.",
+          "unit": "label",
+          "privacy": "public"
+        },
+        "brain_label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Provider/model label. Null means unavailable.",
+          "unit": "label",
+          "privacy": "public"
+        },
+        "stt_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Speech recognition duration. Null means unavailable.",
+          "unit": "milliseconds",
+          "privacy": "public",
+          "minimum": 0
+        },
+        "vlm_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Vision duration. Null means unavailable.",
+          "unit": "milliseconds",
+          "privacy": "public",
+          "minimum": 0
+        },
+        "brain_first_token_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Brain time to first token. Null means unavailable.",
+          "unit": "milliseconds",
+          "privacy": "public",
+          "minimum": 0
+        },
+        "first_audio_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Time to first audio. Null means unavailable.",
+          "unit": "milliseconds",
+          "privacy": "public",
+          "minimum": 0
+        },
+        "turn_ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Total turn duration. Null means unavailable.",
+          "unit": "milliseconds",
+          "privacy": "public",
+          "minimum": 0
+        },
+        "frames": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "audio": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "crops": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "raw_transcripts": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        }
+      },
+      "required": [
+        "v",
+        "entity",
+        "id",
+        "call_id",
+        "t_ms",
+        "role",
+        "text",
+        "router_route",
+        "brain_label",
+        "stt_ms",
+        "vlm_ms",
+        "brain_first_token_ms",
+        "first_audio_ms",
+        "turn_ms"
+      ]
+    },
+    "step_progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "v": {
+          "type": "integer",
+          "description": "Export schema major version.",
+          "unit": "version",
+          "privacy": "public",
+          "const": 1
+        },
+        "entity": {
+          "type": "string",
+          "description": "Destination table name.",
+          "unit": "label",
+          "privacy": "public",
+          "const": "step_progress"
+        },
+        "id": {
+          "type": "string",
+          "description": "Domain-separated HMAC of stable source identity.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "call_id": {
+          "type": "string",
+          "description": "Pseudonymous parent call id.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "task": {
+          "type": "string",
+          "description": "Task identifier.",
+          "unit": "label",
+          "privacy": "personal"
+        },
+        "step": {
+          "type": "string",
+          "description": "Step identifier.",
+          "unit": "label",
+          "privacy": "personal"
+        },
+        "hints_used": {
+          "type": "integer",
+          "description": "Cumulative hints used for this step.",
+          "unit": "count",
+          "privacy": "public",
+          "minimum": 0
+        },
+        "level": {
+          "type": "string",
+          "description": "Recorded assistance or progress level; producer-defined label.",
+          "unit": "label",
+          "privacy": "personal"
+        },
+        "frames": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "audio": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "crops": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "raw_transcripts": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        }
+      },
+      "required": [
+        "v",
+        "entity",
+        "id",
+        "call_id",
+        "task",
+        "step",
+        "hints_used",
+        "level"
+      ]
+    },
+    "memory_event": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "v": {
+          "type": "integer",
+          "description": "Export schema major version.",
+          "unit": "version",
+          "privacy": "public",
+          "const": 1
+        },
+        "entity": {
+          "type": "string",
+          "description": "Destination table name.",
+          "unit": "label",
+          "privacy": "public",
+          "const": "memory_event"
+        },
+        "id": {
+          "type": "string",
+          "description": "Domain-separated HMAC of stable source identity.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "call_id": {
+          "type": "string",
+          "description": "Pseudonymous parent call id.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "item": {
+          "type": "string",
+          "description": "Tagged object name; no scene caption.",
+          "unit": "text",
+          "privacy": "personal"
+        },
+        "place": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Nearby place label; no image or embedding. Null means unavailable.",
+          "unit": "text",
+          "privacy": "personal"
+        },
+        "kind": {
+          "type": "string",
+          "description": "Memory event category, e.g. sighting.",
+          "unit": "label",
+          "privacy": "personal"
+        },
+        "t": {
+          "type": "number",
+          "description": "Observation timestamp.",
+          "unit": "Unix seconds",
+          "privacy": "personal",
+          "minimum": 0
+        },
+        "frames": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "audio": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "crops": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "raw_transcripts": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        }
+      },
+      "required": [
+        "v",
+        "entity",
+        "id",
+        "call_id",
+        "item",
+        "place",
+        "kind",
+        "t"
+      ]
+    },
+    "tool_call": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "v": {
+          "type": "integer",
+          "description": "Export schema major version.",
+          "unit": "version",
+          "privacy": "public",
+          "const": 1
+        },
+        "entity": {
+          "type": "string",
+          "description": "Destination table name.",
+          "unit": "label",
+          "privacy": "public",
+          "const": "tool_call"
+        },
+        "id": {
+          "type": "string",
+          "description": "Domain-separated HMAC of stable source identity.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "call_id": {
+          "type": "string",
+          "description": "Pseudonymous parent call id.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Invoked tool name; arguments and results excluded.",
+          "unit": "label",
+          "privacy": "public"
+        },
+        "ok": {
+          "type": "boolean",
+          "description": "Whether the tool succeeded.",
+          "unit": "boolean",
+          "privacy": "public"
+        },
+        "ms": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Tool duration. Null means unavailable.",
+          "unit": "milliseconds",
+          "privacy": "public",
+          "minimum": 0
+        },
+        "frames": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "audio": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "crops": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "raw_transcripts": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        }
+      },
+      "required": [
+        "v",
+        "entity",
+        "id",
+        "call_id",
+        "name",
+        "ok",
+        "ms"
+      ]
+    },
+    "safety_stop": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "v": {
+          "type": "integer",
+          "description": "Export schema major version.",
+          "unit": "version",
+          "privacy": "public",
+          "const": 1
+        },
+        "entity": {
+          "type": "string",
+          "description": "Destination table name.",
+          "unit": "label",
+          "privacy": "public",
+          "const": "safety_stop"
+        },
+        "id": {
+          "type": "string",
+          "description": "Domain-separated HMAC of stable source identity.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "call_id": {
+          "type": "string",
+          "description": "Pseudonymous parent call id.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "rule_id": {
+          "type": "string",
+          "description": "Code safety rule that stopped the action.",
+          "unit": "label",
+          "privacy": "public"
+        },
+        "t": {
+          "type": "number",
+          "description": "Stop timestamp.",
+          "unit": "Unix seconds",
+          "privacy": "personal",
+          "minimum": 0
+        },
+        "frames": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "audio": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "crops": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "raw_transcripts": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        }
+      },
+      "required": [
+        "v",
+        "entity",
+        "id",
+        "call_id",
+        "rule_id",
+        "t"
+      ]
+    },
+    "proof_counter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "v": {
+          "type": "integer",
+          "description": "Export schema major version.",
+          "unit": "version",
+          "privacy": "public",
+          "const": 1
+        },
+        "entity": {
+          "type": "string",
+          "description": "Destination table name.",
+          "unit": "label",
+          "privacy": "public",
+          "const": "proof_counter"
+        },
+        "id": {
+          "type": "string",
+          "description": "Domain-separated HMAC of stable source identity.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "call_id": {
+          "type": "string",
+          "description": "Pseudonymous parent call id.",
+          "unit": "identifier",
+          "privacy": "personal",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "t": {
+          "type": "number",
+          "description": "Counter snapshot timestamp.",
+          "unit": "Unix seconds",
+          "privacy": "personal",
+          "minimum": 0
+        },
+        "pictures_saved": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Device-wide saved image count at observation time. Null means unavailable.",
+          "unit": "count",
+          "privacy": "public",
+          "minimum": 0
+        },
+        "pictures_sent": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Call outgoing picture count. Null means unavailable.",
+          "unit": "count",
+          "privacy": "public",
+          "minimum": 0
+        },
+        "cloud_ai_calls": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Call outgoing public request attempts, including failures. Null means unavailable.",
+          "unit": "count",
+          "privacy": "public",
+          "minimum": 0
+        },
+        "bytes_to_cloud": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Call outgoing body/payload bytes, excluding headers and transport overhead. Null means unavailable.",
+          "unit": "bytes",
+          "privacy": "public",
+          "minimum": 0
+        },
+        "frames": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "audio": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "crops": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        },
+        "raw_transcripts": {
+          "description": "Forbidden source payload; always dropped and invalid in exported rows.",
+          "unit": "payload",
+          "privacy": "never-export",
+          "not": {}
+        }
+      },
+      "required": [
+        "v",
+        "entity",
+        "id",
+        "call_id",
+        "t",
+        "pictures_saved",
+        "pictures_sent",
+        "cloud_ai_calls",
+        "bytes_to_cloud"
+      ]
+    }
+  }
+}

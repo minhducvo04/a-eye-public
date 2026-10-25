@@ -1,0 +1,4 @@
+// Copy this file to Local.xcconfig (same folder). Local.xcconfig is git-ignored.
+// Use your Mac's LAN IP (System Settings > Wi-Fi > Details) and the port `make dev` prints.
+// The `$()` is required: a bare `//` starts a comment in an xcconfig file and would cut the URL off.
+AEYE_SERVER_URL = ws:/$()/192.168.1.10:8000/ws2

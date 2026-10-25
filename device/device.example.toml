@@ -1,0 +1,46 @@
+# A-eye device settings. Copy to /etc/a-eye/device.toml (Pi) or anywhere (Mac) and edit.
+# No secrets here: put A_EYE_TOKEN, or CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET, in /etc/a-eye/device.env.
+
+[server]
+# The family's own server (the Mac running `make server`). LAN: ws://<mac-ip>:8000/ws2
+# Tailscale Serve: wss://<mac-name>.<tailnet>.ts.net/ws2
+url = "ws://127.0.0.1:8000/ws2"
+pack = "general"
+voice = ""                 # empty = the server's default Kokoro voice
+
+[privacy]
+private = true             # nothing leaves the family's machines. Set false to use the switches below.
+claude = false             # paid AI backup: smarter answers (question plus a written scene note)
+cartesia = false           # paid natural voice (reply sentences only)
+twelvelabs = false         # paid video memory search (short silent clips, deleted at call end)
+
+[trigger]
+button = "keyboard"        # keyboard (Enter, for testing), gpio (Pi push button), none (motion or SIGUSR1 only)
+button_pin = 17            # BCM number; the button goes between this pin and ground
+motion = false             # true for a fixed home camera aimed at the key table
+armed_cap_s = 43200        # 12-hour Armed cap; cancels an in-flight Event at expiry
+zone = [0, 0, 1, 1]        # normalized left, top, right, bottom motion zone
+remember_pin = 22         # optional second button: capture an Event
+motion_share = 0.02        # share of the picture that must change to count as motion
+idle_off_s = 90            # turn off after this long with no motion and no speech
+cap_s = 900                # never stay on longer than 15 minutes
+drop_person_frames = true  # needs OpenCV; disabled/unavailable/error = no Event or Session frames sent
+
+[camera]
+source = "auto"            # auto (Pi camera, else USB), picamera, opencv, video, images
+index = 0                  # USB camera index for opencv
+path = ""                  # folder of images or a video file, for source = images or video
+fps = 1.0
+long_side = 640
+quality = 70
+
+[audio]
+mic = "auto"               # auto or sounddevice (default input), wav (tests), none
+speaker = "auto"           # auto or sounddevice (default output), null (tests)
+record_dir = ""            # null speaker only: write reply WAVs here
+barge_in = false           # false = the mic is muted while the speaker talks (a speakerphone hears itself)
+threshold = 500            # speech level (RMS of PCM16); raise it in a noisy room
+
+[indicator]
+kind = "terminal"          # terminal, or gpio for a privacy LED
+led_pin = 27

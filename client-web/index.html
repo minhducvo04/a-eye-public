@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <title>A-eye</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="stage">
+    <video id="camera" autoplay playsinline webkit-playsinline muted></video>
+    <canvas id="overlay" aria-hidden="true"></canvas>
+    <div class="hud">
+      <div class="top">
+        <section id="step-card" class="card" aria-live="polite">
+          <p><span class="k">State</span> <span id="step-state">Waiting</span></p>
+          <p><span class="k">Item</span> <span id="step-item">—</span></p>
+          <p><span class="k">Header</span> <span id="step-header">—</span></p>
+        </section>
+        <span id="status" class="status off" title="socket" aria-label="socket disconnected"></span>
+      </div>
+      <p id="live-stats" class="live-stats">0 fps · — · closed</p>
+      <p id="verdict" class="banner hidden" aria-live="polite"></p>
+      <div class="spacer"></div>
+      <p id="caption" class="caption" aria-live="polite"></p>
+      <div class="controls">
+        <button type="button" id="start-camera">Start camera</button>
+        <button type="button" id="flip-camera" hidden>Flip camera</button>
+        <button type="button" id="pause-live" disabled>Pause</button>
+        <button type="button" id="power-off">Power is off</button>
+        <button type="button" id="check-again">Check again</button>
+        <button type="button" id="send-photo">Send photo</button>
+        <label class="file-btn">Upload photo
+          <input id="upload" type="file" accept="image/*">
+        </label>
+      </div>
+    </div>
+  </main>
+  <script type="module" src="call.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+# systemd unit for the A-eye device on a Raspberry Pi.
+#   sudo cp device/aeye-device.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now aeye-device
+#   journalctl -u aeye-device -f
+[Unit]
+Description=A-eye device client
+Wants=network-online.target
+After=network-online.target sound.target
+
+[Service]
+User=aeye
+Group=aeye
+SupplementaryGroups=video audio gpio
+WorkingDirectory=/opt/a-eye
+# Credentials only: A_EYE_TOKEN=... or CF_ACCESS_CLIENT_ID=... and CF_ACCESS_CLIENT_SECRET=... (chmod 600).
+EnvironmentFile=-/etc/a-eye/device.env
+ExecStart=/opt/a-eye/.venv/bin/python -m device --config /etc/a-eye/device.toml
+Restart=on-failure
+RestartSec=5
+# Nothing is written to disk by the client; keep the filesystem read-only for it.
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

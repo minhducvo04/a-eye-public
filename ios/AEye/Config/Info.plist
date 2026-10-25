@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AEYE_SERVER_URL</key>
+	<string>$(AEYE_SERVER_URL)</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>A-eye looks through the camera to point at parts while you work.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Connects to the A-eye server on your network.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>So you can talk to A-eye hands-free.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Speech is turned into text on this iPhone.</string>
+</dict>
+</plist>

@@ -1,0 +1,1183 @@
+{
+ "hello": [
+  {
+   "v": 1,
+   "type": "hello",
+   "session_id": "s1",
+   "board_id": "demo-b650",
+   "mode": "live",
+   "client": "web"
+  }
+ ],
+ "project_open": [
+  {
+   "v": 1,
+   "type": "project_open",
+   "session_id": "s1",
+   "project_id": "p1"
+  }
+ ],
+ "frame": [
+  {
+   "v": 1,
+   "type": "frame",
+   "session_id": "s1",
+   "seq": 42,
+   "ts_ms": 1761271200123,
+   "w": 640,
+   "h": 480,
+   "orientation": "portrait",
+   "jpeg_b64": "/9j/4AAQ"
+  }
+ ],
+ "photo": [
+  {
+   "v": 1,
+   "type": "photo",
+   "session_id": "s1",
+   "seq": 43,
+   "w": 640,
+   "h": 480,
+   "jpeg_b64": "/9j/4AAQ"
+  }
+ ],
+ "confirm": [
+  {
+   "v": 1,
+   "type": "confirm",
+   "session_id": "s1",
+   "what": "power_off",
+   "value": true
+  }
+ ],
+ "user_text": [
+  {
+   "v": 1,
+   "type": "user_text",
+   "session_id": "s1",
+   "text": "which way does it go"
+  }
+ ],
+ "parts_scan": [
+  {
+   "v": 1,
+   "type": "parts_scan",
+   "session_id": "s1",
+   "jpeg_b64": "/9j/4AAQ"
+  }
+ ],
+ "market": [
+  {
+   "v": 1,
+   "type": "market",
+   "session_id": "s1",
+   "category": "ram",
+   "budget_usd": 120
+  }
+ ],
+ "audio": [
+  {
+   "v": 1,
+   "type": "audio",
+   "session_id": "s1",
+   "utterance_id": "u7",
+   "sample_rate": 16000,
+   "pcm16_b64": "AAAA"
+  }
+ ],
+ "overlay": [
+  {
+   "v": 1,
+   "type": "overlay",
+   "seq": 42,
+   "level": "header",
+   "boxes": [
+    {
+     "id": "b1",
+     "header": "CPU_FAN",
+     "label": "CPU_FAN",
+     "bbox": [
+      0.4,
+      0.55,
+      0.06,
+      0.03
+     ],
+     "role": "target",
+     "conf": 0.86
+    },
+    {
+     "id": "b2",
+     "header": "SYS_FAN1",
+     "bbox": [
+      0.7,
+      0.8,
+      0.06,
+      0.03
+     ],
+     "role": "other",
+     "conf": 0.74
+    }
+   ],
+   "arrow": {
+    "from": [
+     0.2,
+     0.9
+    ],
+    "to": [
+     0.43,
+     0.565
+    ]
+   },
+   "diagram": {
+    "header": "CPU_FAN",
+    "img": "/manuals/demo-b650/cpu_fan.png",
+    "page": 12,
+    "rotation_deg": 0,
+    "highlight_pins": [
+     1,
+     2,
+     3,
+     4
+    ]
+   }
+  },
+  {
+   "v": 1,
+   "type": "overlay",
+   "seq": 50,
+   "level": "pin",
+   "boxes": [
+    {
+     "id": "b1",
+     "header": "F_PANEL",
+     "bbox": [
+      0.5,
+      0.5,
+      0.1,
+      0.04
+     ],
+     "role": "target",
+     "conf": 0.9,
+     "pins": [
+      {
+       "n": 5,
+       "x": 0.52,
+       "y": 0.51,
+       "role": "target"
+      },
+      {
+       "n": 6,
+       "x": 0.52,
+       "y": 0.53,
+       "role": "target"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "say": [
+  {
+   "v": 1,
+   "type": "say",
+   "utterance_id": "u7",
+   "step_id": "fan-1",
+   "text": "That is the CPU fan cable. It goes here."
+  }
+ ],
+ "step": [
+  {
+   "v": 1,
+   "type": "step",
+   "step_id": "fan-1",
+   "state": "GUIDE",
+   "item": "cpu_fan_cable",
+   "target_header": "CPU_FAN",
+   "index": 0,
+   "total": 3
+  }
+ ],
+ "verdict": [
+  {
+   "v": 1,
+   "type": "verdict",
+   "step_id": "fan-1",
+   "pass": false,
+   "conf": 0.91,
+   "reason": "That is SYS_FAN1, not CPU_FAN",
+   "offset_pins": 0
+  },
+  {
+   "v": 1,
+   "type": "verdict",
+   "step_id": "fan-1",
+   "pass": false,
+   "abstain": true,
+   "conf": 0.3,
+   "reason": "Too blurry. Hold still and move closer."
+  }
+ ],
+ "parts": [
+  {
+   "v": 1,
+   "type": "parts",
+   "items": [
+    {
+     "category": "ram",
+     "brand": "Generic",
+     "model": "DDR5 2x16GB 6000",
+     "specs": {
+      "ddr_gen": "DDR5",
+      "dimm_format": "DIMM",
+      "speed_mts": 6000,
+      "capacity_gb": 32,
+      "modules": 2
+     },
+     "source": "scan",
+     "confirmed": false
+    }
+   ]
+  }
+ ],
+ "market_results": [
+  {
+   "v": 1,
+   "type": "market_results",
+   "result": {
+    "v": 1,
+    "query_key": "ram:DDR5:DIMM:32",
+    "category": "ram",
+    "items": [],
+    "note": "no offers in cache"
+   }
+  }
+ ],
+ "summary": [
+  {
+   "v": 1,
+   "type": "summary",
+   "text": "CPU fan done. Front panel next time.",
+   "done": [
+    "fan-1"
+   ],
+   "failed": [],
+   "to_buy": []
+  }
+ ],
+ "annotated": [
+  {
+   "v": 1,
+   "type": "annotated",
+   "seq": 43,
+   "png_b64": "iVBORw0KGgo"
+  }
+ ],
+ "error": [
+  {
+   "v": 1,
+   "type": "error",
+   "code": "power_off_required",
+   "message": "Switch the PSU off and unplug it first."
+  }
+ ],
+ "identify_request": [
+  {
+   "image_b64": "/9j/4AAQ",
+   "candidates": [
+    "cpu_fan_cable",
+    "sys_fan_cable",
+    "ram_stick"
+   ]
+  }
+ ],
+ "identify_response": [
+  {
+   "item": "cpu_fan_cable",
+   "conf": 0.88,
+   "bbox": [
+    0.1,
+    0.7,
+    0.2,
+    0.2
+   ],
+   "ms": 910
+  },
+  {
+   "item": "unknown",
+   "conf": 0.2,
+   "ms": 400
+  }
+ ],
+ "locate_request": [
+  {
+   "image_b64": "/9j/4AAQ",
+   "board_id": "demo-b650",
+   "header": "F_PANEL",
+   "want_pins": [
+    5,
+    6
+   ]
+  }
+ ],
+ "locate_response": [
+  {
+   "found": true,
+   "bbox": [
+    0.5,
+    0.5,
+    0.1,
+    0.04
+   ],
+   "source": "ocr",
+   "conf": 0.82,
+   "blur": false,
+   "glare": false,
+   "others": [
+    {
+     "header": "SYS_FAN1",
+     "bbox": [
+      0.7,
+      0.8,
+      0.06,
+      0.03
+     ],
+     "conf": 0.7
+    }
+   ],
+   "pins": {
+    "grid": [
+     [
+      0.51,
+      0.51
+     ],
+     [
+      0.52,
+      0.51
+     ]
+    ],
+    "pin1": [
+     0.51,
+     0.51
+    ],
+    "residual": 0.07,
+    "keyed_gap": true,
+    "pin_ok": true
+   },
+   "ms": 1200
+  },
+  {
+   "found": false,
+   "conf": 0.0,
+   "blur": true,
+   "ms": 300
+  }
+ ],
+ "verify_request": [
+  {
+   "image_b64": "/9j/4AAQ",
+   "board_id": "demo-b650",
+   "header": "F_PANEL",
+   "expect": {
+    "item": "f_panel_bundle",
+    "pins": [
+     5,
+     6
+    ]
+   }
+  }
+ ],
+ "verify_response": [
+  {
+   "pass": false,
+   "conf": 0.91,
+   "offset_pins": -1,
+   "seen_header": "F_PANEL",
+   "reason": "one pin left",
+   "ms": 2600
+  }
+ ],
+ "health_response": [
+  {
+   "ok": true,
+   "models": [
+    "fake"
+   ],
+   "gpu": "none",
+   "fake": true
+  }
+ ],
+ "voice_say": [
+  {
+   "type": "say",
+   "utterance_id": "u7",
+   "text": "Switch the PSU off and unplug it."
+  }
+ ],
+ "voice_transcript": [
+  {
+   "type": "transcript",
+   "text": "which way does it go",
+   "final": true,
+   "ts_ms": 1761271200999
+  }
+ ],
+ "voice_barge_in": [
+  {
+   "type": "barge_in",
+   "utterance_id": "u7",
+   "at_ms": 640
+  }
+ ],
+ "voice_spoken": [
+  {
+   "type": "spoken",
+   "utterance_id": "u7"
+  }
+ ],
+ "part": [
+  {
+   "id": "pt1",
+   "category": "board",
+   "brand": "Demo",
+   "model": "Demo B650 board",
+   "specs": {
+    "socket": "AM5",
+    "ddr_gen": "DDR5",
+    "dimm_format": "DIMM",
+    "max_speed_mts": 6400,
+    "max_capacity_gb": 192,
+    "dimm_slots": 4,
+    "form_factor": "ATX"
+   },
+   "source": "fixture",
+   "confirmed": true
+  }
+ ],
+ "market_query": [
+  {
+   "v": 1,
+   "category": "ram",
+   "owned_parts": [
+    {
+     "category": "board",
+     "model": "Demo B650 board",
+     "specs": {
+      "socket": "AM5",
+      "ddr_gen": "DDR5",
+      "dimm_format": "DIMM",
+      "max_speed_mts": 6400,
+      "max_capacity_gb": 192
+     },
+     "confirmed": true
+    }
+   ],
+   "budget_usd": 120,
+   "max_results": 3
+  }
+ ],
+ "compat": [
+  {
+   "status": "fits",
+   "reasons": [
+    "DDR5 matches board",
+    "DIMM matches board",
+    "6000 MT/s within board max 6400"
+   ],
+   "unknown": []
+  },
+  {
+   "status": "unverified",
+   "reasons": [
+    "DDR5 matches board"
+   ],
+   "unknown": [
+    "ecc"
+   ]
+  }
+ ],
+ "offer": [
+  {
+   "title": "Example DDR5 32GB (2x16GB) 6000 kit",
+   "retailer": "example-store",
+   "price_usd": 89.99,
+   "shipping_usd": 0,
+   "condition": "new",
+   "url": "https://example.com/item/1",
+   "specs": {
+    "ddr_gen": "DDR5",
+    "dimm_format": "DIMM",
+    "speed_mts": 6000,
+    "capacity_gb": 32,
+    "modules": 2,
+    "ecc": false
+   },
+   "source": "fixture",
+   "fetched_at": "2026-10-23T19:00:00Z",
+   "compat": {
+    "status": "fits",
+    "reasons": [
+     "DDR5 matches board"
+    ],
+    "unknown": []
+   },
+   "explain": "Fits because: DDR5 DIMM, 6000 MT/s is within your board's 6400."
+  }
+ ],
+ "market_response": [
+  {
+   "v": 1,
+   "query_key": "ram:DDR5:DIMM:32",
+   "category": "ram",
+   "items": [],
+   "note": "fixture data"
+  }
+ ],
+ "header_table": [
+  {
+   "board_id": "demo-b650",
+   "model": "Demo B650 board (fixture, not a real product)",
+   "fixture": true,
+   "headers": [
+    {
+     "name": "CPU_FAN",
+     "silkscreen": "CPU_FAN",
+     "accepts": [
+      "cpu_fan_cable"
+     ],
+     "rows": 1,
+     "cols": 4,
+     "pin1": "left",
+     "keyed_pin": 1,
+     "pins": {
+      "1": "GND",
+      "2": "+12V",
+      "3": "Sense",
+      "4": "PWM"
+     },
+     "checked_by": "fixture"
+    }
+   ]
+  }
+ ],
+ "v2_hello": [
+  {
+   "v": 2,
+   "type": "hello",
+   "session_id": "s2",
+   "pack": "home",
+   "client": "web",
+   "tts": "browser"
+  },
+  {
+   "v": 2,
+   "type": "hello",
+   "session_id": "s3",
+   "pack": "general",
+   "tts": "server",
+   "stt": "server"
+  },
+  {
+   "v": 2,
+   "type": "hello",
+   "session_id": "phone-1",
+   "pack": "general",
+   "role": "camera",
+   "pair_code": "ABCD2345",
+   "camera": true
+  }
+ ],
+ "v2_frame": [
+  {
+   "v": 2,
+   "type": "frame",
+   "session_id": "s2",
+   "seq": 7,
+   "ts_ms": 1761271200123,
+   "w": 640,
+   "h": 480,
+   "jpeg_b64": "/9j/4AAQ"
+  }
+ ],
+ "v2_user_text": [
+  {
+   "v": 2,
+   "type": "user_text",
+   "session_id": "s2",
+   "text": "where does this go",
+   "final": true,
+   "source": "browser_stt"
+  }
+ ],
+ "v2_barge_in": [
+  {
+   "v": 2,
+   "type": "barge_in",
+   "session_id": "s2",
+   "utterance_id": "u3",
+   "at_ms": 420
+  }
+ ],
+ "v2_confirm": [
+  {
+   "v": 2,
+   "type": "confirm",
+   "session_id": "s2",
+   "what": "power_off",
+   "value": true
+  }
+ ],
+ "v2_draw": [
+  {
+   "v": 2,
+   "type": "draw",
+   "agent": "helper",
+   "seq": 7,
+   "ops": [
+    {
+     "kind": "clear",
+     "id": "c0"
+    },
+    {
+     "kind": "box",
+     "id": "o1",
+     "bbox": [
+      0.4,
+      0.55,
+      0.06,
+      0.03
+     ],
+     "role": "target",
+     "label": "CPU_FAN",
+     "anchor": {
+      "object_id": "o1",
+      "bbox": [
+       0.4,
+       0.55,
+       0.06,
+       0.03
+      ]
+     }
+    },
+    {
+     "kind": "arrow",
+     "id": "a1",
+     "from": [
+      0.2,
+      0.9
+     ],
+     "to": [
+      0.43,
+      0.56
+     ],
+     "role": "target"
+    },
+    {
+     "kind": "circle",
+     "id": "c1",
+     "center": [
+      0.5,
+      0.5
+     ],
+     "r": 0.05,
+     "role": "info"
+    },
+    {
+     "kind": "path",
+     "id": "p1",
+     "points": [
+      [
+       0.1,
+       0.1
+      ],
+      [
+       0.2,
+       0.15
+      ],
+      [
+       0.3,
+       0.1
+      ]
+     ],
+     "role": "info"
+    },
+    {
+     "kind": "label",
+     "id": "l1",
+     "at": [
+      0.5,
+      0.2
+     ],
+     "text": "stir here",
+     "ttl_ms": 4000
+    },
+    {
+     "kind": "pin",
+     "id": "pn1",
+     "at": [
+      0.6,
+      0.6
+     ],
+     "role": "warn"
+    },
+    {
+     "kind": "highlight",
+     "id": "h1",
+     "bbox": [
+      0.1,
+      0.1,
+      0.2,
+      0.2
+     ],
+     "role": "ok"
+    }
+   ]
+  }
+ ],
+ "v2_say": [
+  {
+   "v": 2,
+   "type": "say",
+   "agent": "helper",
+   "utterance_id": "u3",
+   "text": "That goes on the header with the arrow."
+  },
+  {
+   "v": 2,
+   "type": "say",
+   "agent": "helper",
+   "utterance_id": "u4.0",
+   "turn_id": "t4",
+   "part": 0,
+   "final": false,
+   "text": "Okay, I see the pan."
+  }
+ ],
+ "v2_audio": [
+  {
+   "v": 2,
+   "type": "audio",
+   "agent": "helper",
+   "utterance_id": "u3",
+   "sample_rate": 16000,
+   "pcm16_b64": "AAAA",
+   "final": false
+  }
+ ],
+ "v2_agent_state": [
+  {
+   "v": 2,
+   "type": "agent_state",
+   "agent": "helper",
+   "state": "speaking",
+   "focus": [
+    0.43,
+    0.56
+   ]
+  }
+ ],
+ "v2_market_results": [
+  {
+   "v": 2,
+   "type": "market_results",
+   "agent": "shopper",
+   "result": {
+    "v": 1,
+    "query_key": "ram:DDR5:DIMM",
+    "category": "ram",
+    "items": []
+   }
+  },
+  {
+   "v": 2,
+   "type": "market_results",
+   "agent": "shopper",
+   "result": {
+    "v": 1,
+    "product": "Demo mug",
+    "items": [
+     {
+      "store": "Fixture Store",
+      "price": 26,
+      "currency": "USD",
+      "delivery_days": 1,
+      "pickup_today": false,
+      "url": "https://example.com/product",
+      "in_stock": true,
+      "notes": "Synthetic test offer",
+      "selected": true
+     }
+    ]
+   }
+  }
+ ],
+ "v2_error": [
+  {
+   "v": 2,
+   "type": "error",
+   "code": "brain_unavailable",
+   "message": "Using the local fallback."
+  }
+ ],
+ "scene_request": [
+  {
+   "image_b64": "/9j/4AAQ",
+   "queries": [
+    "CPU_FAN label",
+    "the cable in my hand"
+   ],
+   "max_objects": 8
+  }
+ ],
+ "scene_response": [
+  {
+   "caption": "A motherboard with a fan cable held above it.",
+   "objects": [
+    {
+     "id": "o1",
+     "label": "CPU_FAN",
+     "bbox": [
+      0.4,
+      0.55,
+      0.06,
+      0.03
+     ],
+     "conf": 0.7
+    }
+   ],
+   "source": "fake",
+   "ms": 12
+  }
+ ],
+ "brain_turn": [
+  {
+   "agent": "helper",
+   "say": "That goes on CPU_FAN.",
+   "draw": [
+    {
+     "kind": "clear"
+    },
+    {
+     "kind": "box",
+     "target": "o1",
+     "role": "target",
+     "text": "CPU_FAN"
+    },
+    {
+     "kind": "arrow",
+     "from_target": "o2",
+     "target": "o1"
+    }
+   ]
+  },
+  {
+   "agent": "shopper",
+   "say": "Let me check prices.",
+   "draw": [],
+   "market_category": "ram"
+  }
+ ],
+ "v2_metrics": [
+  {
+   "v": 2,
+   "type": "metrics",
+   "turn_id": "t4",
+   "vlm_ms": 900,
+   "brain_first_token_ms": 420,
+   "first_audio_ms": 1100,
+   "turn_ms": 2300
+  }
+ ],
+ "v2_track": [
+  {
+   "v": 2,
+   "type": "track",
+   "seq": 12,
+   "objects": [
+    {
+     "id": "o1",
+     "label": "CPU_FAN",
+     "bbox": [
+      0.41,
+      0.55,
+      0.06,
+      0.03
+     ],
+     "conf": 0.8
+    }
+   ]
+  }
+ ],
+ "v2_audio_in": [
+  {
+   "v": 2,
+   "type": "audio_in",
+   "session_id": "s2",
+   "seq": 3,
+   "sample_rate": 16000,
+   "pcm16_b64": "AAAA",
+   "final": true
+  }
+ ],
+ "v2_turn": [
+  {
+   "v": 2,
+   "type": "turn",
+   "turn_id": "t9",
+   "stage": "received",
+   "at_ms": 1761275000123,
+   "text": "where does this go"
+  },
+  {
+   "v": 2,
+   "type": "turn",
+   "turn_id": "t9",
+   "stage": "backup",
+   "at_ms": 1761275004200,
+   "detail": "brain slow, trying backup",
+   "typical_ms": 1100
+  },
+  {
+   "v": 2,
+   "type": "turn",
+   "turn_id": "t12",
+   "stage": "expert",
+   "at_ms": 1761290000000,
+   "detail": "claude-opus-5-5"
+  }
+ ],
+ "v2_reply_delta": [
+  {
+   "v": 2,
+   "type": "reply_delta",
+   "agent": "helper",
+   "turn_id": "t9",
+   "text": "That goes on the"
+  }
+ ],
+ "v2_camera": [
+  {
+   "v": 2,
+   "type": "camera",
+   "session_id": "s2",
+   "on": false
+  }
+ ],
+ "v2_pair_request": [
+  {
+   "v": 2,
+   "type": "pair_request",
+   "session_id": "s2"
+  },
+  {
+   "v": 2,
+   "type": "pair_request",
+   "session_id": "s-1",
+   "kick": true
+  }
+ ],
+ "v2_pair": [
+  {
+   "v": 2,
+   "type": "pair",
+   "code": "ABCD2345",
+   "expires_in_s": 300,
+   "path": "/agent.html?pair=ABCD2345"
+  }
+ ],
+ "v2_pair_status": [
+  {
+   "v": 2,
+   "type": "pair_status",
+   "state": "joined",
+   "role": "call",
+   "camera_on": true,
+   "source": "camera"
+  },
+  {
+   "v": 2,
+   "type": "pair_status",
+   "state": "rejected",
+   "role": "camera",
+   "detail": "Unknown or expired code."
+  },
+  {
+   "v": 2,
+   "type": "pair_status",
+   "state": "rejected",
+   "role": "camera",
+   "detail": "Waiting for your next call.",
+   "retry_s": 3
+  }
+ ],
+ "v2_rewind": [
+  {
+   "v": 2,
+   "type": "rewind",
+   "session_id": "s-1",
+   "on": true
+  },
+  {
+   "v": 2,
+   "type": "rewind",
+   "session_id": "s-1",
+   "on": true,
+   "keep": true
+  }
+ ],
+ "v2_rewind_state": [
+  {
+   "v": 2,
+   "type": "rewind_state",
+   "on": true,
+   "clips": 3,
+   "ready": 2,
+   "indexing": 1,
+   "pending": 0,
+   "notice": "Rewind on: short video clips of this call are uploaded to TwelveLabs so you can ask about them later."
+  },
+  {
+   "v": 2,
+   "type": "rewind_state",
+   "on": false,
+   "locked": true
+  }
+ ],
+ "v2_rewind_hit": [
+  {
+   "v": 2,
+   "type": "rewind_hit",
+   "turn_id": "t-1",
+   "query": "plug in the CPU fan",
+   "t_s": 130.0,
+   "start_s": 128.0,
+   "end_s": 133.0,
+   "sure": true,
+   "alternatives": [
+    402.5
+   ],
+   "frame_b64": "AAAA",
+   "objects": [
+    {
+     "id": "o1",
+     "label": "CPU fan",
+     "bbox": [
+      0.4,
+      0.3,
+      0.2,
+      0.2
+     ],
+     "conf": 0.82
+    }
+   ]
+  }
+ ],
+ "v2_rewind_recap": [
+  {
+   "v": 2,
+   "type": "rewind_recap",
+   "turn_id": "t-2",
+   "steps": [
+    {
+     "t_s": 42.0,
+     "text": "Installed the CPU"
+    },
+    {
+     "t_s": 130.0,
+     "text": "Plugged in the CPU fan cable"
+    }
+   ],
+   "skipped": [
+    "install the RAM"
+   ]
+  }
+ ],
+ "v2_find_item": [
+  {
+   "v": 2,
+   "type": "find_item",
+   "turn_id": "t-3",
+   "item": "keys",
+   "found": true,
+   "at_ms": 1792850000000,
+   "t_s": -86400.0,
+   "start_s": -86400.0,
+   "end_s": -86400.0,
+   "sure": true,
+   "alternatives": [],
+   "when": "yesterday at 3:02 PM",
+   "place": "under the left red cup",
+   "home": "blue bowl",
+   "say": "I last saw your keys under the left red cup, yesterday at 3:02 PM. Their home is the blue bowl.",
+   "frame_b64": "AAAA",
+   "objects": [
+    {
+     "id": "memory-0",
+     "label": "keys",
+     "bbox": [
+      0.1,
+      0.2,
+      0.5,
+      0.5
+     ],
+     "conf": 1.0
+    }
+   ],
+   "live": {
+    "object_id": "o2",
+    "bbox": [
+     0.1,
+     0.4,
+     0.2,
+     0.3
+    ]
+   },
+   "count": 12,
+   "count_item": 3
+  }
+ ],
+ "v2_memory_state": [
+  {
+   "v": 2,
+   "type": "memory_state",
+   "on": true,
+   "memory_id": "me",
+   "count": 0,
+   "crops": 0,
+   "bytes": 96,
+   "encrypted": true,
+   "retention_days": 7
+  }
+ ],
+ "shopping_offer": [
+  {
+   "store": "Fixture Store",
+   "price": 26,
+   "currency": "USD",
+   "delivery_days": 1,
+   "pickup_today": false,
+   "url": "https://example.com/product",
+   "in_stock": true,
+   "notes": "Synthetic test offer",
+   "selected": true
+  }
+ ],
+ "shopping_response": [
+  {
+   "v": 1,
+   "product": "Demo mug",
+   "items": [
+    {
+     "store": "Fixture Store",
+     "price": 26,
+     "currency": "USD",
+     "delivery_days": 1,
+     "pickup_today": false,
+     "url": "https://example.com/product",
+     "in_stock": true,
+     "notes": "Synthetic test offer",
+     "selected": true
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,2169 @@
+/* A-eye call page. Tokens mirror ios/AEye/App/Views/Style.swift (Palette, glass) and AEyeCore DrawRole. */
+
+:root {
+  --warn: #FF8A3D;
+  --helper: #8EB6FF;
+  --shopper: #E8943A;
+  --end-call: #E6383D; /* Color(red: 0.90, green: 0.22, blue: 0.24) */
+  --role-target: #3DDC97;
+  --role-info: #9EB6FF;
+  --role-ok: #4C9AFF;
+  --sheet-bg: #0C1016;
+  --text: #FFFFFF;
+  --text-2: rgba(255, 255, 255, 0.7);
+  --text-3: rgba(255, 255, 255, 0.55);
+  --glass-tint: rgba(0, 0, 0, 0.32);
+  --glass-edge: rgba(255, 255, 255, 0.14);
+  --glass-blur: blur(20px) saturate(1.6);
+  --r-caption: 20px;
+  --r-button: 16px;
+  --r-card: 16px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  /* iOS Dynamic Type defaults (Large): caption2 11, footnote 13, subheadline 15, body 17, title3 20. */
+  --fs-caption2: 11px;
+  --fs-footnote: 13px;
+  --fs-subhead: 15px;
+  --fs-body: 17px;
+  --fs-title3: 20px;
+  --gutter: 16px;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  background: #000;
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--helper);
+  outline-offset: 2px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+svg .fill {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* Dark glass over the live camera: blur, a black tint and a hairline edge (Style.swift `glass`). */
+.glass {
+  background: var(--glass-tint);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 0 0 1px var(--glass-edge);
+}
+
+.round {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  color: var(--text);
+}
+
+.r44 { width: 44px; height: 44px; }
+.r44 svg { width: 20px; height: 20px; }
+.r56 { width: 56px; height: 56px; }
+.r68 { width: 68px; height: 68px; }
+.r68 svg { width: 30px; height: 30px; }
+
+/* ---------- Stage: camera fills the screen, chrome on top ---------- */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 30%, #1a1f27 0%, #07090c 70%, #000 100%);
+}
+
+#camera,
+#still,
+#draw {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#camera,
+#still {
+  object-fit: cover;
+  background: transparent;
+}
+
+#draw {
+  pointer-events: none;
+}
+
+/* ---------- Camera screen and mode ring ---------- */
+
+.ring-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: max(8px, env(safe-area-inset-top)) 0 calc(24px + env(safe-area-inset-bottom));
+}
+
+.ring-top {
+  display: flex;
+  gap: 10px;
+  padding: 0 var(--gutter);
+}
+
+.ring-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ring-label {
+  text-align: center;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+.ring-title {
+  font-size: var(--fs-title3);
+  font-weight: 600;
+}
+
+.ring-hint {
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: var(--fs-footnote);
+  color: var(--text-2);
+}
+
+/* Slot 84 px; content margins centre the first and last slot. */
+.ring {
+  display: flex;
+  height: 84px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 0 calc(50% - 42px);
+}
+
+.ring::-webkit-scrollbar {
+  display: none;
+}
+
+.ring > button {
+  flex: 0 0 84px;
+  height: 84px;
+  display: grid;
+  place-items: center;
+  scroll-snap-align: center;
+}
+
+.ring .disc {
+  --d: 34px;
+  --o: 0.38;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--d);
+  height: var(--d);
+  border-radius: 50%;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.35);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  opacity: var(--o);
+  transition: width 0.25s ease, height 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ring .disc svg {
+  width: calc(var(--d) * 0.36);
+  height: calc(var(--d) * 0.36);
+  stroke-width: 2;
+}
+
+.ring > button[data-dist="0"] .disc { --d: 78px; --o: 1; background: rgba(0, 0, 0, 0.25); box-shadow: inset 0 0 0 5px #fff; }
+.ring > button[data-dist="1"] .disc { --d: 52px; --o: 0.8; }
+.ring > button[data-dist="2"] .disc { --d: 42px; --o: 0.55; }
+.ring > button:not([data-pack]) .disc { opacity: calc(var(--o) * 0.6); }
+
+.ring > button.shake .disc {
+  animation: shake 0.4s linear;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  12.5% { transform: translateX(8px); }
+  37.5% { transform: translateX(-8px); }
+  62.5% { transform: translateX(8px); }
+  87.5% { transform: translateX(-8px); }
+}
+
+/* ---------- Call screen ---------- */
+
+.call {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  padding: max(8px, env(safe-area-inset-top)) var(--gutter) calc(20px + env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+
+.call .top > *,
+.call .lower > * {
+  pointer-events: auto;
+}
+
+.top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: var(--fs-footnote);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.pill b {
+  font-weight: 700;
+}
+
+.pill .sep {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.digits {
+  font-variant-numeric: tabular-nums;
+}
+
+.chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+}
+
+.chip.warn {
+  color: var(--warn);
+}
+
+.chip.soft {
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+/* Web only: the turn pipeline line (Sent, Thinking 1.2 s, ...). */
+.pipeline {
+  max-width: 100%;
+  font-family: var(--mono);
+  font-size: var(--fs-caption2);
+  color: var(--text-3);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#proof-strip { white-space: normal; }
+#guide-presenter { pointer-events: auto; white-space: normal; }
+#guide-test-label { display: block; color: var(--warn); }
+#proof-safety { color: var(--accent); }
+
+/* PresenceDot.swift: 16 px box, 8 px dot; speaking pulses with a halo, thinking spins a 70% ring,
+   listening has a steady ring, idle keeps the space empty. */
+.presence-dot {
+  position: relative;
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  --c: var(--helper);
+}
+
+.presence-dot[data-agent="shopper"] {
+  --c: var(--shopper);
+}
+
+.presence-dot::before,
+.presence-dot::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  display: none;
+}
+
+.presence-dot::before {
+  inset: 4px;
+  background: var(--c);
+}
+
+.presence-dot::after {
+  inset: 1px;
+}
+
+.presence-dot[data-state="speaking"]::before,
+.presence-dot[data-state="thinking"]::before,
+.presence-dot[data-state="listening"]::before,
+.presence-dot[data-state="speaking"]::after,
+.presence-dot[data-state="thinking"]::after,
+.presence-dot[data-state="listening"]::after {
+  display: block;
+}
+
+.presence-dot[data-state="speaking"]::before { animation: pulse 0.9s ease-in-out infinite; }
+.presence-dot[data-state="speaking"]::after {
+  background: color-mix(in srgb, var(--c) 25%, transparent);
+  animation: pulse 0.9s ease-in-out infinite;
+}
+.presence-dot[data-state="thinking"]::after {
+  border: 2px solid var(--c);
+  border-right-color: transparent;
+  animation: spin 1s linear infinite;
+}
+.presence-dot[data-state="listening"]::after {
+  border: 1.5px solid color-mix(in srgb, var(--c) 45%, transparent);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.lower {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* CaptionCard.swift (web: a smaller card, fewer lines, no typed bar below it) */
+.caption {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  border-radius: var(--r-caption);
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: var(--fs-caption2);
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--helper);
+}
+
+.eyebrow.shopper,
+.caption[data-agent="shopper"] .eyebrow {
+  color: var(--shopper);
+}
+
+.caption-text {
+  font-size: var(--fs-subhead);
+  font-weight: 500;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+  overflow: hidden;
+}
+
+.caption-text:empty {
+  display: none;
+}
+
+.caption-text .target {
+  font-style: normal;
+  color: var(--role-target);
+}
+
+.caption-text .pending {
+  color: var(--text-2);
+}
+
+.caption-error {
+  font-size: var(--fs-subhead);
+  font-weight: 500;
+  color: var(--warn);
+}
+
+/* ListeningStrip.swift: waveform 96x28 and the heard line, glass, radius 18. */
+.listen {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 18px;
+}
+
+.wave {
+  flex: 0 0 auto;
+  width: 96px;
+  height: 28px;
+}
+
+.listen-text {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-subhead);
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  transition: color 0.15s ease-out;
+}
+
+.listen-text.mono {
+  font-family: var(--mono);
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+}
+
+.listen-text[data-tone="idle"] { color: rgba(255, 255, 255, 0.55); }
+.listen-text[data-tone="talking"] { color: var(--helper); }
+.listen-text[data-tone="muted"] { color: var(--warn); }
+
+/* WaitCard.swift on iOS shows a ring, eyebrow and line. The web keeps only the ring with the percentage,
+   a small round chip centred above the subtitle, so the camera and the words keep the space. The eyebrow and
+   line stay in the DOM for the wait logic and its tests but are not shown. */
+.wait-card {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  margin: 0 auto;
+  border-radius: 50%;
+  --accent: var(--helper);
+  animation: wait-in 0.25s ease-out;
+}
+
+.wait-card .wait-text {
+  display: none;
+}
+
+.wait-card[data-agent="shopper"] {
+  --accent: var(--shopper);
+}
+
+@keyframes wait-in {
+  from { opacity: 0; transform: scale(0.96); }
+}
+
+.wait-ring {
+  position: relative;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+}
+
+.wait-ring svg {
+  position: absolute;
+  inset: 0;
+  width: 44px;
+  height: 44px;
+  overflow: visible;
+  transform: rotate(-90deg);
+  fill: none;
+  stroke-width: 3;
+}
+
+.wait-ring .track { stroke: rgba(255, 255, 255, 0.15); }
+.wait-ring .arc { stroke: var(--accent); stroke-linecap: round; }
+
+#wait-pct {
+  position: relative;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.wait-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.wait-eyebrow {
+  font-family: var(--mono);
+  font-size: var(--fs-caption2);
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--accent);
+}
+
+.wait-line {
+  font-size: var(--fs-subhead);
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+/* ScanSweep.swift: brackets and a band over the camera; the page sets the region and band from the clock. */
+.scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  --scan: var(--helper);
+  animation: wait-in 0.25s ease-out;
+}
+
+.scan-band {
+  position: absolute;
+  background: linear-gradient(to bottom, rgb(142 182 255 / 0), rgb(142 182 255 / 0.22), rgb(142 182 255 / 0.55));
+  border-bottom: 1.5px solid var(--scan);
+}
+
+.scan-brackets {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--scan);
+  stroke-opacity: 0.85;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.35));
+}
+
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 3px;
+  vertical-align: text-bottom;
+  background: rgba(255, 255, 255, 0.6);
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  50% { opacity: 0; }
+}
+
+/* PC Build power gate */
+.power-gate {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+}
+
+.power-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--r-button);
+  background: var(--warn);
+  color: #000;
+  font-size: var(--fs-body);
+  font-weight: 600;
+}
+
+.power-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.2;
+}
+
+.power-gate p {
+  font-size: var(--fs-footnote);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Typed bar (iOS shows it only without voice; the web always shows it). */
+.typed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 18px;
+  border-radius: 999px;
+}
+
+.typed input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: var(--fs-body);
+}
+
+.typed input::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.typed .send {
+  display: grid;
+  place-items: center;
+  color: var(--helper);
+}
+
+.typed .send svg {
+  width: 30px;
+  height: 30px;
+}
+
+.typed .send .cut {
+  stroke: #000;
+  stroke-width: 2.4;
+}
+
+/* Bottom bar: iOS has mic and end call; camera, hold to talk and settings are web additions. */
+.bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+/* Folded controls (resting state): only the dots button on the left and the mic on the right stay, in the
+   same row, so the subtitle above keeps the whole width. Tapping the dots brings the full row back. */
+.call.controls-collapsed .bottom {
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.call.controls-collapsed .bottom > :not(#controls-toggle, #mic) {
+  display: none;
+}
+
+.call.controls-collapsed #mic {
+  width: 64px;
+  height: 64px;
+  box-shadow: 0 6px 20px rgba(142, 182, 255, 0.25);
+}
+
+#controls-toggle {
+  color: var(--text-2);
+}
+
+#controls-toggle svg {
+  width: 24px;
+  height: 24px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bottom > .round {
+    transition: opacity 0.2s ease, transform 0.25s ease, width 0.2s ease, height 0.2s ease;
+  }
+
+  .call.controls-collapsed .bottom > .round {
+    animation: controls-dock 0.3s ease;
+  }
+}
+
+/* Phones: the expanded row drops the two desktop-only controls (pair a phone, hold-to-talk with Space) and
+   tightens so six buttons fit a 320 px screen. */
+@media (max-width: 480px) {
+  .bottom #pair-call,
+  .bottom #hold {
+    display: none;
+  }
+
+  .bottom {
+    gap: 8px;
+    padding: 0 2px;
+  }
+
+  .bottom .r56 {
+    width: 44px;
+    height: 44px;
+  }
+
+  .bottom #end-call {
+    width: 56px;
+    height: 56px;
+    margin: 0 2px;
+  }
+
+  .call.controls-collapsed #mic {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+@keyframes controls-dock {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+#mic[data-muted="true"] {
+  color: var(--warn);
+}
+
+#mic:disabled {
+  opacity: 0.5;
+}
+
+#rewind-btn[aria-pressed="true"],
+#hold[aria-pressed="true"] {
+  background: var(--helper);
+  color: #000;
+}
+
+#hold.hold-default {
+  box-shadow: inset 0 0 0 2px var(--helper);
+}
+
+.end {
+  background: var(--end-call);
+  color: #fff;
+}
+
+/* Web only: Tap to start (unlocks audio inside a user gesture). */
+.start-overlay {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-size: var(--fs-body);
+  font-weight: 600;
+}
+
+/* PermissionNotice.swift */
+.permission {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(420px, calc(100% - 32px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+  background: #000;
+  border-radius: var(--r-caption);
+}
+
+.permission-icon {
+  width: 34px;
+  height: 34px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.permission-title {
+  font-size: var(--fs-title3);
+  font-weight: 600;
+}
+
+.permission-text {
+  font-size: var(--fs-body);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.permission-btn {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: #fff;
+  color: #000;
+  font-weight: 600;
+}
+
+.text-btn {
+  color: var(--helper);
+  font-size: var(--fs-body);
+  padding: 6px 0;
+}
+
+.text-btn.strong {
+  font-weight: 600;
+}
+
+/* ---------- Sheets (market, settings): iOS medium detent, dark, grabber ---------- */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.sheet {
+  position: fixed;
+  z-index: 11;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: min(100%, 560px);
+  max-height: 72dvh;
+  overflow-y: auto;
+  padding: 8px 20px calc(18px + env(safe-area-inset-bottom));
+  border-radius: 22px 22px 0 0;
+  background: var(--sheet-bg);
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.grabber {
+  width: 36px;
+  height: 5px;
+  margin: 0 auto 12px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.sheet-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.sheet-title {
+  margin-top: 2px;
+  font-size: var(--fs-title3);
+  font-weight: 600;
+}
+
+.market-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.offer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: var(--r-card);
+}
+
+.offer-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.offer-title {
+  font-size: var(--fs-body);
+  font-weight: 600;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.offer-retailer {
+  font-size: var(--fs-subhead);
+  color: var(--text-2);
+}
+
+.offer-price {
+  font-family: var(--mono);
+  font-size: var(--fs-body);
+  font-weight: 500;
+}
+
+.offer-why {
+  font-size: var(--fs-footnote);
+  color: var(--text-2);
+}
+
+.offer a {
+  color: var(--helper);
+  font-size: var(--fs-subhead);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.status-chip {
+  --c: var(--role-info);
+  flex: 0 0 auto;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 16%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 60%, transparent);
+  white-space: nowrap;
+}
+
+.status-chip.fits { --c: var(--role-ok); }
+.status-chip.no { --c: var(--warn); }
+
+.market-note,
+.market-empty {
+  font-size: var(--fs-footnote);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.market-empty {
+  font-size: var(--fs-subhead);
+}
+
+/* Settings: iOS grouped form */
+.group-title {
+  margin: 18px 0 6px 16px;
+  font-size: var(--fs-footnote);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.group {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.group .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 16px;
+  font-size: var(--fs-body);
+  text-align: left;
+}
+
+.group .row + .row {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.group .row .leak {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--fs-footnote);
+  color: var(--text-3);
+}
+
+.leaves {
+  margin: 0;
+  padding: 10px 16px 10px 32px;
+  font-size: var(--fs-subhead);
+  line-height: 1.4;
+}
+
+.leaves li + li {
+  margin-top: 6px;
+}
+
+.leaves .home {
+  list-style: none;
+  margin-left: -16px;
+  color: var(--text-3);
+}
+
+.group-foot {
+  margin: 6px 16px 0;
+  font-size: var(--fs-footnote);
+  color: var(--text-3);
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: var(--fs-subhead);
+}
+
+.dim {
+  color: var(--text-2);
+}
+
+.voice-pick {
+  max-width: 60%;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.group input[type="range"] {
+  flex: 1;
+  max-width: 60%;
+  accent-color: var(--helper);
+}
+
+.file-btn {
+  position: relative;
+  color: var(--helper);
+  cursor: pointer;
+}
+
+.file-btn input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.transcript-list {
+  max-height: 30dvh;
+  margin: 0;
+  padding: 8px 16px 12px 36px;
+  overflow: auto;
+  font-size: var(--fs-subhead);
+  line-height: 1.4;
+}
+
+.transcript-list .who {
+  margin-right: 6px;
+  font-weight: 600;
+}
+
+.transcript-list small {
+  color: var(--text-3);
+}
+
+/* ?dev=1 latency HUD */
+.dev-hud {
+  position: absolute;
+  top: 100px;
+  left: 12px;
+  z-index: 3;
+  margin: 0;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(8, 10, 14, 0.78);
+  color: #d5dde8;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.35;
+  white-space: pre;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan-band {
+    display: none;
+  }
+
+  .ring .disc {
+    transition: none;
+  }
+
+  .caret,
+  .wait-card,
+  .scan,
+  .ring > button.shake .disc,
+  .presence-dot::before,
+  .presence-dot::after {
+    animation: none !important;
+  }
+}
+
+/* Web only: which mic is live (under the pipeline line) and the Settings level bar. */
+.mic-line {
+  color: var(--text-3);
+}
+
+.level {
+  position: relative;
+  flex: 1;
+  max-width: 60%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.level > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: var(--helper);
+  transition: width 60ms linear;
+}
+
+/* Rewind on the call screen: a chip above the typed bar and its starter questions. */
+.rewind-ask {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.rewind-ask-chip,
+.rewind-prompts button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: var(--fs-subhead);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.rewind-ask-chip {
+  color: var(--helper);
+}
+
+.rewind-ask-chip svg {
+  width: 18px;
+  height: 18px;
+}
+
+.rewind-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rewind-prompts button {
+  background: var(--glass-tint);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 0 0 1px var(--glass-edge);
+}
+
+/* Six round buttons fit a 390 px phone only a little smaller. */
+@media (max-width: 420px) {
+  .bottom {
+    gap: 8px;
+  }
+
+  .bottom .r56 {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Rewind: on-screen badge while clips are uploaded, and the answer frame with boxes. */
+.private-badge {
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #1f6f4a;
+  color: #fff;
+  font-size: var(--fs-footnote);
+  font-weight: 650;
+}
+
+.private-badge.hidden {
+  display: none;
+}
+
+/* In the call's top column, under the pill (it used to be fixed top right and covered the pill at 390 px). */
+.rewind-badge {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.rewind-badge.hidden {
+  display: none;
+}
+
+.rewind-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  color: inherit;
+}
+
+.rewind-steps {
+  display: grid;
+  gap: 8px;
+  padding-left: 0;
+  list-style: none;
+}
+
+.rewind-time {
+  display: inline-block;
+  min-width: 3.5em;
+  font-family: var(--mono);
+  opacity: 0.7;
+}
+
+.rewind-skipped {
+  margin-top: 12px;
+  color: #ffd60a;
+}
+
+.rewind-frame {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.rewind-frame img {
+  display: block;
+  width: 100%;
+}
+
+.rewind-box {
+  position: absolute;
+  border: 3px solid #ffd60a;
+  border-radius: 6px;
+  color: #ffd60a;
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  text-shadow: 0 1px 2px #000;
+  padding: 2px 4px;
+}
+
+.rewind-when {
+  margin-top: 10px;
+  font-family: var(--mono);
+}
+
+/* Memory aid: the remembered count under the pipeline line and its Forget buttons. */
+.memory {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.memory-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.memory-actions .chip {
+  font-weight: 600;
+}
+
+.warn-text {
+  color: var(--warn);
+}
+
+/* Split find answer: then (kept frame, boxed) beside now (live camera, arrow). Stacks on a phone. */
+.sheet.wide {
+  width: min(100%, 980px);
+}
+
+.memory-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .memory-split {
+    grid-template-columns: 1fr;
+  }
+
+  .memory-split .memory-pane {
+    aspect-ratio: 16 / 10; /* both panes fit the sheet on a phone */
+  }
+}
+
+.memory-pane {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #111;
+}
+
+.memory-pane img,
+.memory-pane video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill; /* boxes and the arrow are fractions of the frame */
+}
+
+.memory-tag {
+  position: absolute;
+  z-index: 2;
+  top: 8px;
+  left: 8px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  font-family: var(--mono);
+  font-size: var(--fs-footnote);
+  font-weight: 700;
+}
+
+.memory-tag.live {
+  color: var(--role-target);
+}
+
+.memory-arrow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--role-target);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.6));
+}
+
+.memory-arrow path {
+  vector-effect: non-scaling-stroke;
+  stroke-width: 4px;
+}
+
+.memory-hint,
+.memory-off {
+  position: absolute;
+  z-index: 2;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  text-shadow: 0 1px 2px #000;
+}
+
+.memory-off {
+  top: 45%;
+  text-align: center;
+  color: var(--text-3);
+}
+
+.memory-line {
+  margin: 0 0 12px;
+  font-size: var(--fs-body);
+  font-weight: 600;
+}
+
+/* Mode names under each disc: shown in the desktop row only. */
+.ring-name {
+  display: none;
+}
+
+/* Desktop (mouse or trackpad): every mode at once in a centred row, no sideways scrolling needed. Coming-soon
+   modes stay dimmed. Phones keep the snap ring. */
+@media (min-width: 700px) and (hover: hover) and (pointer: fine) {
+  .ring {
+    height: auto;
+    overflow: visible;
+    scroll-snap-type: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 var(--gutter);
+  }
+
+  .ring > button {
+    flex: 0 0 auto;
+    width: 92px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+  }
+
+  .ring > button[data-dist] .disc { --d: 60px; --o: 1; }
+  .ring > button[data-dist="0"] .disc { --d: 72px; box-shadow: inset 0 0 0 4px #fff; }
+  .ring > button:not([data-pack]) .disc { opacity: 0.4; }
+  .ring > button:hover .disc { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6); }
+  .ring > button[data-dist="0"]:hover .disc { box-shadow: inset 0 0 0 4px #fff; }
+  .ring > button:focus-visible { outline: none; }
+  .ring > button:focus-visible .disc { outline: 2px solid var(--helper); outline-offset: 3px; }
+
+  .ring-name {
+    display: block;
+    font-size: var(--fs-footnote);
+    font-weight: 500;
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+
+  .ring > button[data-dist="0"] .ring-name { color: var(--text); font-weight: 600; }
+  .ring > button:not([data-pack]) .ring-name { color: var(--text-3); }
+}
+
+/* Phone camera: one tap from the call bar on wider screens; first item in Settings everywhere. */
+@media (max-width: 560px) {
+  #pair-call { display: none; }
+}
+
+.pair-qr {
+  display: block;
+  max-width: min(100%, 240px);
+  height: auto;
+  margin: 8px auto 14px;
+}
+
+.pair-qr[hidden] { display: none; }
+
+.pair-link,
+#pair-status {
+  display: block;
+  padding: 0 16px;
+  font-size: var(--fs-subhead);
+  color: var(--text-2);
+  overflow-wrap: anywhere;
+}
+
+#pair-status:not(:empty),
+.pair-link:not(:empty) {
+  padding-bottom: 10px;
+}
+
+/* Sheets scroll with wheel, trackpad and touch; the page behind never steals the scroll. */
+.sheet {
+  max-height: 86dvh;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+.sheet:focus {
+  outline: none;
+}
+
+/* Mic on is unmistakable: filled helper blue, like other "on" buttons. Off stays the struck mic in warn. */
+#mic[aria-pressed="true"] {
+  background: var(--helper);
+  color: #000;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--helper) 30%, transparent);
+}
+
+/* ==========================================================================
+   UI polish (2026-10-24): first run, one badge style, quiet status lines, calm Memory mode,
+   Simple/Advanced settings, switches, projector scale. Same iOS tokens; no new colours except
+   --calm (Private, switches) and --amber (Rewind on), both used for state only.
+   ========================================================================== */
+
+:root {
+  --calm: #3DDC97;   /* = --role-target: Private and "on" switches */
+  --amber: #FFC25C;  /* Rewind on: something is being kept, said calmly */
+  --surface: rgba(255, 255, 255, 0.07);
+  --ease-calm: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- First run: wordmark and what A-eye is ---------- */
+
+.ring-top {
+  position: relative;
+  align-items: center;
+  min-height: 44px;
+}
+
+.wordmark {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--fs-subhead);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-2);
+}
+
+.intro {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 6vw, 96px);
+  text-wrap: balance;
+}
+
+.intro-title {
+  margin: 0;
+  max-width: 14ch;
+  font-size: clamp(34px, 5.2vw, 72px);
+  font-weight: 650;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+
+.intro-text {
+  margin-top: 16px;
+  max-width: 40ch;
+  font-size: clamp(17px, 1.6vw, 22px);
+  line-height: 1.45;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.intro-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  font-size: var(--fs-subhead);
+  font-weight: 600;
+  color: var(--calm);
+}
+
+.intro-note svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+@media (max-height: 560px) {
+  .intro { display: none; }
+}
+
+/* ---------- One badge style: Private, Rewind on, Expert (+ Recap action) ---------- */
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.badges:not(:has(> :not(.hidden))) {
+  display: none;
+}
+
+.rewind-badge {
+  gap: 6px;
+}
+
+.badge {
+  --c: rgba(255, 255, 255, 0.7);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: var(--font);
+  font-size: var(--fs-footnote);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 45%, transparent);
+  white-space: nowrap;
+}
+
+.badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--c);
+}
+
+.badge.hidden { display: none; }
+.badge.private { --c: var(--calm); }
+.badge.rewind { --c: var(--amber); }
+.badge.expert { --c: var(--helper); }
+
+.badge.action {
+  --c: rgba(255, 255, 255, 0.35);
+  color: var(--helper);
+}
+
+.badge.action::before { display: none; }
+
+/* ---------- Quiet status: timings and mic names only with ?dev=1; problems still show ---------- */
+
+#pipeline,
+.mic-line {
+  display: none;
+}
+
+body.dev #pipeline,
+body.dev .mic-line {
+  display: block;
+}
+
+#pipeline:is([data-stage="failed"], [data-stage="backup"], [data-stage="retrying"], [data-stage="connection_problem"], [data-stage="disconnected"]) {
+  display: block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: var(--font);
+  font-size: var(--fs-footnote);
+  font-weight: 500;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  text-shadow: none;
+}
+
+#memory-count {
+  min-height: 34px;
+  font-family: var(--font);
+  font-size: var(--fs-subhead);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.memory-actions .chip {
+  min-height: 40px;
+  padding: 8px 16px;
+  font-family: var(--font);
+  font-size: var(--fs-subhead);
+}
+
+/* Bottom bar: the end call stands apart a little. */
+.bottom #end-call {
+  margin: 0 6px;
+}
+
+.round:focus-visible,
+.badge.action:focus-visible,
+.chip:focus-visible {
+  outline: 2px solid var(--helper);
+  outline-offset: 3px;
+}
+
+/* ---------- Calm Memory mode: larger words, fewer buttons, slower motion ---------- */
+
+body[data-mode="memory"] .lower {
+  max-width: 640px;
+}
+
+body[data-mode="memory"] .call .caption-text {
+  font-size: 25px;
+  line-height: 1.36;
+}
+
+body[data-mode="memory"] .caption-error {
+  font-size: var(--fs-body);
+}
+
+body[data-mode="memory"] #memory-count {
+  min-height: 40px;
+  padding: 8px 18px;
+  font-size: var(--fs-body);
+}
+
+body[data-mode="memory"] #hold,
+body[data-mode="memory"] .scan-band {
+  display: none;
+}
+
+body[data-mode="memory"] .presence-dot::before,
+body[data-mode="memory"] .presence-dot::after {
+  animation-duration: 2.4s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body[data-mode="memory"] .caption {
+    animation: calm-in 0.5s var(--ease-calm);
+  }
+}
+
+@keyframes calm-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* The sheet keeps its centring transform while it animates in. */
+@keyframes sheet-in {
+  from { opacity: 0; transform: translate(-50%, 16px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sheet {
+    animation: sheet-in 0.45s var(--ease-calm);
+  }
+}
+
+/* ---------- Find answer (split): bigger answer line, clearer tags ---------- */
+
+.memory-line {
+  font-size: var(--fs-title3);
+  line-height: 1.3;
+}
+
+.memory-tag {
+  font-family: var(--font);
+  font-size: var(--fs-subhead);
+  padding: 5px 12px;
+  background: rgba(0, 0, 0, 0.62);
+}
+
+.memory-hint {
+  font-size: var(--fs-subhead);
+}
+
+.memory-pane {
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.rewind-box {
+  border-radius: 8px;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.45);
+}
+
+/* ---------- Settings: switches, Simple then Advanced ---------- */
+
+input[type="checkbox"][role="switch"] {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  flex: 0 0 auto;
+  width: 51px;
+  height: 31px;
+  margin: 0;
+  border-radius: 999px;
+  background: rgba(120, 120, 128, 0.36);
+  cursor: pointer;
+  transition: background 0.2s ease-out;
+}
+
+input[type="checkbox"][role="switch"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s var(--ease-calm);
+}
+
+input[type="checkbox"][role="switch"]:checked {
+  background: var(--calm);
+}
+
+input[type="checkbox"][role="switch"]:checked::after {
+  transform: translateX(20px);
+}
+
+input[type="checkbox"][role="switch"]:focus-visible {
+  outline: 2px solid var(--helper);
+  outline-offset: 2px;
+}
+
+.link-row {
+  text-decoration: none;
+}
+
+.link-row span {
+  color: var(--text-3);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.pair-out > p:empty,
+.pair-out > a:empty {
+  display: none;
+}
+
+.advanced {
+  margin-top: 26px;
+}
+
+/* <details> content sits in a shadow slot, so box-sizing does not inherit there: set it again. */
+.advanced *,
+.advanced *::before,
+.advanced *::after {
+  box-sizing: border-box;
+}
+
+.advanced-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: var(--fs-body);
+  color: var(--text-2);
+  cursor: pointer;
+  list-style: none;
+}
+
+.advanced-summary::-webkit-details-marker {
+  display: none;
+}
+
+.advanced-summary::after {
+  content: "›";
+  font-size: 22px;
+  color: var(--text-3);
+  transition: transform 0.2s ease-out;
+}
+
+.advanced[open] .advanced-summary::after {
+  transform: rotate(90deg);
+}
+
+.sheet-foot {
+  margin-top: 18px;
+}
+
+.sheet .group .row {
+  min-height: 48px;
+}
+
+/* ---------- Projector and large screens: same layout, scaled up for the back of the room ---------- */
+
+@media (min-width: 1200px) and (min-height: 760px) {
+  .call,
+  .ring-screen,
+  .permission,
+  .start-overlay,
+  .sheet {
+    zoom: 1.12;
+  }
+
+  .sheet { max-height: calc(86dvh / 1.12); } /* vh units are zoomed too */
+}
+
+@media (min-width: 1700px) and (min-height: 950px) {
+  .call,
+  .ring-screen,
+  .permission,
+  .start-overlay,
+  .sheet {
+    zoom: 1.4;
+  }
+
+  .sheet { max-height: calc(86dvh / 1.4); }
+}
+
+input[type="checkbox"][role="switch"]:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Readable over any room: on the call screen glass is darker than iOS's 0.32 tint, because a bright lamp or
+   window behind a pill dropped white text to 1.5:1 (measured). Blur and edge stay the same. */
+.call .glass,
+.call .badge,
+#pipeline:is([data-stage]) {
+  background-color: rgba(8, 10, 14, 0.58);
+}
+
+/* Subtitle stage: the answer reads like a TV caption over the camera, no card. A soft fade at the foot of the
+   stage keeps white text readable over a bright counter. */
+.call::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 46%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0.5) 45%, transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.call > * {
+  position: relative;
+  z-index: 1;
+}
+
+.call .caption.glass {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+  padding: 0 8px;
+  max-width: none;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.call .caption-text {
+  font-size: 22px;
+  line-height: 1.32;
+  font-weight: 600;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9), 0 0 2px #000;
+}
+
+.call .caption-error {
+  justify-content: center;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9), 0 0 2px #000;
+}
+
+.call .listen.glass {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+  justify-content: center;
+  padding: 0;
+}
+
+.call .listen-text {
+  flex: 0 1 auto;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* Wider screens: keep the subtitle line length comfortable. */
+@media (min-width: 700px) {
+  .call .caption-text {
+    font-size: 24px;
+  }
+}
+
+/* ---------- Review d64c237 fixes ---------- */
+
+/* Problems read as information, not alarms: white text with a small amber dot. */
+.caption-error {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  color: var(--text);
+}
+
+.caption-error::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--amber);
+  transform: translateY(-1px);
+}
+
+/* Memory mode: one filled button at most (the mic). Rewind lives in its badge and Settings; the starter chip goes. */
+body[data-mode="memory"] #rewind-btn,
+body[data-mode="memory"] .rewind-ask {
+  display: none;
+}
+
+/* Memory mode type: no monospace in what the person reads; sentence case in the listening strip. */
+body[data-mode="memory"] .pill,
+body[data-mode="memory"] .eyebrow,
+body[data-mode="memory"] .listen-text.mono {
+  font-family: var(--font);
+  letter-spacing: 0;
+}
+
+.listen-text.mono {
+  font-family: var(--font);
+  font-size: var(--fs-subhead);
+  text-transform: lowercase;
+}
+
+.listen-text.mono::first-letter {
+  text-transform: uppercase;
+}
+
+.ring-hint {
+  font-family: var(--font);
+  font-size: var(--fs-subhead);
+}
+
+/* Memory count shares the badge look (sans, glass, thin edge). */
+#memory-count {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+/* Recap: brighter on dark glass. */
+.badge.action {
+  color: #B9D0FF;
+}
+
+/* Desktop row: coming-soon modes say so instead of only looking disabled. */
+@media (min-width: 700px) and (hover: hover) and (pointer: fine) {
+  .ring > button:not([data-pack]) .ring-name::after {
+    content: " · soon";
+  }
+}
+
+/* Find answer on a phone: both panes fit, the answer line first. */
+@media (max-width: 640px) {
+  .sheet.wide {
+    max-height: 92dvh;
+  }
+
+  .memory-split .memory-pane {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* Status chips (Connecting, notices) in the reading font too. */
+.chip {
+  font-family: var(--font);
+  font-size: var(--fs-footnote);
+}
+
+#rewind-recap {
+  background-color: rgba(8, 10, 14, 0.72);
+  color: #C9DBFF;
+}
+
+/* Expert has its own badge; its timing line shows only with ?dev=1. */
+body:not(.dev) .top:has(#expert-badge:not(.hidden)) #pipeline {
+  display: none;
+}
+
+/* Desktop row: "soon" on its own small line so names never run together. */
+@media (min-width: 700px) and (hover: hover) and (pointer: fine) {
+  .ring > button:not([data-pack]) .ring-name::after {
+    content: "soon";
+    display: block;
+    margin-top: 2px;
+    font-size: var(--fs-caption2);
+    letter-spacing: 0.04em;
+    text-align: center;
+    color: var(--text-3);
+  }
+}
+
+@media (min-width: 700px) and (hover: hover) and (pointer: fine) {
+  .ring > button:not([data-pack]) .ring-name::after {
+    font-size: var(--fs-footnote);
+    color: var(--text-2);
+  }
+}
+
+/* Headset: stable panels and explicit controls for gaze and pinch. */
+body.headset {
+  --fs-caption2: 16px; --fs-footnote: 18px; --fs-subhead: 20px;
+  --fs-body: 22px; --fs-title3: 26px;
+  background: #0c1016;
+}
+.headset *, .headset *::before, .headset *::after {
+  animation: none !important; transition: none !important; scroll-behavior: auto !important;
+}
+.headset button, .headset select, .headset input:not([type=checkbox]), .headset summary, .headset .link-row {
+  min-height: 56px; min-width: 56px; font-size: 20px;
+}
+.headset input[type=checkbox] { min-width: 32px; min-height: 32px; }
+.headset .sheet { width: min(720px, 94vw); }
+.headset #start-camera, .headset #camera-pick, .headset .scan-band { display: none; }
+.headset .ring-name { opacity: 1; }
+.headset-panel {
+  position: absolute; top: 24%; left: 50%; transform: translateX(-50%);
+  width: min(620px, 88%); padding: 28px; text-align: center;
+  border-radius: 24px; background: #151d29; pointer-events: auto;
+}
+.headset-panel h1 { font-size: 30px; margin: 0 0 18px; }
+.headset-panel p { font-size: 20px; line-height: 1.5; }
+.headset-panel button { padding: 16px 28px; border-radius: 16px; }
+.headset-panel.connected { top: 18%; padding: 12px; background: transparent; pointer-events: none; }
+.headset-panel.connected h1 { font-size: 22px; color: #aec4df; }
+.works-with { padding: 4px 20px; }
+.works-with p { line-height: 1.5; }
+
+.headset-panel.connected button { pointer-events: auto; }
+
+#flip-camera[hidden] { display: none; }
+
+/* Keep the extra mobile control in the existing row on narrow phones. */
+@media (max-width: 380px) {
+  .bottom:has(#flip-camera:not([hidden])) { gap: 4px; }
+  .bottom:has(#flip-camera:not([hidden])) .r56 { width: 36px; height: 44px; }
+}

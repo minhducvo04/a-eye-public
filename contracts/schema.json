@@ -1,0 +1,3358 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://a-eye.local/contracts/schema.json",
+ "title": "A-eye contracts v1 + v2",
+ "description": "Source of truth for every message between A-eye modules. Change only by PR with a version bump. Coordinates are normalized 0..1 of the frame that was sent. bbox is [x, y, w, h] from the top-left corner. v1: the PC-build step flow on WS /ws. v2: the multi-purpose see, point, draw, talk agent on WS /ws2. v1 stays supported.",
+ "$defs": {
+  "v": {
+   "const": 1
+  },
+  "unit": {
+   "type": "number",
+   "minimum": 0,
+   "maximum": 1
+  },
+  "bbox": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/unit"
+   },
+   "minItems": 4,
+   "maxItems": 4
+  },
+  "point": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/unit"
+   },
+   "minItems": 2,
+   "maxItems": 2
+  },
+  "conf": {
+   "type": "number",
+   "minimum": 0,
+   "maximum": 1
+  },
+  "jpeg_b64": {
+   "type": "string",
+   "minLength": 1
+  },
+  "item": {
+   "description": "Closed set of parts A-eye will guide. Anything else gets the fixed refusal line (safety gate).",
+   "enum": [
+    "cpu_fan_cable",
+    "sys_fan_cable",
+    "f_panel_bundle",
+    "ram_stick",
+    "sata_cable",
+    "m2_ssd",
+    "atx_24pin",
+    "eps_8pin"
+   ]
+  },
+  "step_state": {
+   "enum": [
+    "SAFETY",
+    "IDENTIFY",
+    "LOCATE",
+    "GUIDE",
+    "AWAIT",
+    "VERIFY",
+    "DONE",
+    "RETRY"
+   ]
+  },
+  "mode": {
+   "enum": [
+    "live",
+    "photo"
+   ]
+  },
+  "hello": {
+   "description": "Client to server, first message on WS /ws.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "mode"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "hello"
+    },
+    "session_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "board_id": {
+     "type": "string"
+    },
+    "mode": {
+     "$ref": "#/$defs/mode"
+    },
+    "client": {
+     "enum": [
+      "web",
+      "ios"
+     ]
+    }
+   }
+  },
+  "project_open": {
+   "description": "Client to server: load a saved build (project memory). Server answers with step + say (welcome back line).",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "project_id"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "project_open"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "project_id": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
+  "frame": {
+   "description": "Client to server: one live camera frame (1 to 2 fps). Server drops results for frames older than 1.5 s.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "seq",
+    "ts_ms",
+    "w",
+    "h",
+    "jpeg_b64"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "frame"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "ts_ms": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "w": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "h": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "orientation": {
+     "enum": [
+      "portrait",
+      "landscape_left",
+      "landscape_right",
+      "portrait_upside_down"
+     ]
+    },
+    "jpeg_b64": {
+     "$ref": "#/$defs/jpeg_b64"
+    }
+   }
+  },
+  "photo": {
+   "description": "Client to server: one still photo (photo mode, the floor demo).",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "seq",
+    "w",
+    "h",
+    "jpeg_b64"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "photo"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "w": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "h": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "jpeg_b64": {
+     "$ref": "#/$defs/jpeg_b64"
+    }
+   }
+  },
+  "confirm": {
+   "description": "Client to server: a button press. power_off is required before any step leaves SAFETY.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "what",
+    "value"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "confirm"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "what": {
+     "enum": [
+      "power_off",
+      "seated",
+      "check_again",
+      "next",
+      "stop"
+     ]
+    },
+    "value": {
+     "type": "boolean"
+    }
+   }
+  },
+  "user_text": {
+   "description": "Client to server: a typed command or a final STT transcript forwarded by the client.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "text"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "user_text"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "text": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
+  "parts_scan": {
+   "description": "Client to server: photo of part boxes; server answers with parts (user confirms each row).",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "jpeg_b64"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "parts_scan"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "jpeg_b64": {
+     "$ref": "#/$defs/jpeg_b64"
+    }
+   }
+  },
+  "market": {
+   "description": "Client to server: ask for cheaper or better parts that fit this build.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "category"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "market"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "category": {
+     "$ref": "#/$defs/part_category"
+    },
+    "budget_usd": {
+     "type": "number",
+     "minimum": 0
+    }
+   }
+  },
+  "audio": {
+   "description": "Both ways on WS /ws: 16 kHz mono PCM16 chunk. Mic up, TTS down.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "pcm16_b64"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "audio"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "utterance_id": {
+     "type": "string"
+    },
+    "sample_rate": {
+     "const": 16000
+    },
+    "pcm16_b64": {
+     "type": "string"
+    }
+   }
+  },
+  "box": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "id",
+    "bbox",
+    "role",
+    "conf"
+   ],
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "header": {
+     "type": "string"
+    },
+    "label": {
+     "type": "string"
+    },
+    "bbox": {
+     "$ref": "#/$defs/bbox"
+    },
+    "role": {
+     "enum": [
+      "target",
+      "other",
+      "wrong",
+      "ok"
+     ]
+    },
+    "conf": {
+     "$ref": "#/$defs/conf"
+    },
+    "pins": {
+     "description": "Only when level is pin, which requires pin_ok from vision.",
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "n",
+       "x",
+       "y",
+       "role"
+      ],
+      "properties": {
+       "n": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "x": {
+        "$ref": "#/$defs/unit"
+       },
+       "y": {
+        "$ref": "#/$defs/unit"
+       },
+       "role": {
+        "enum": [
+         "target",
+         "other"
+        ]
+       }
+      }
+     }
+    }
+   }
+  },
+  "overlay": {
+   "description": "Server to client: what to draw on the frame with this seq. Empty boxes means clear.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "seq",
+    "level",
+    "boxes"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "overlay"
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "level": {
+     "enum": [
+      "header",
+      "pin"
+     ]
+    },
+    "boxes": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/box"
+     }
+    },
+    "arrow": {
+     "description": "Optional arrow from the held item to the target, normalized.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "from",
+      "to"
+     ],
+     "properties": {
+      "from": {
+       "$ref": "#/$defs/point"
+      },
+      "to": {
+       "$ref": "#/$defs/point"
+      }
+     }
+    },
+    "diagram": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "header",
+      "img"
+     ],
+     "properties": {
+      "header": {
+       "type": "string"
+      },
+      "img": {
+       "type": "string"
+      },
+      "page": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "rotation_deg": {
+       "type": "number"
+      },
+      "highlight_pins": {
+       "type": "array",
+       "items": {
+        "type": "integer",
+        "minimum": 1
+       }
+      }
+     }
+    }
+   }
+  },
+  "say": {
+   "description": "Server to client (and orchestrator to voice): one sentence to show as a caption and speak.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "utterance_id",
+    "text"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "say"
+    },
+    "utterance_id": {
+     "type": "string"
+    },
+    "step_id": {
+     "type": "string"
+    },
+    "text": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
+  "step": {
+   "description": "Server to client: current step and its state machine state.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "step_id",
+    "state"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "step"
+    },
+    "step_id": {
+     "type": "string"
+    },
+    "state": {
+     "$ref": "#/$defs/step_state"
+    },
+    "item": {
+     "$ref": "#/$defs/item"
+    },
+    "target_header": {
+     "type": "string"
+    },
+    "index": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "total": {
+     "type": "integer",
+     "minimum": 0
+    }
+   }
+  },
+  "verdict": {
+   "description": "Server to client: result of checking a step. pass true needs conf >= 0.8 (confidence gate). abstain means the frame was too blurry, glared or stale to judge.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "step_id",
+    "pass",
+    "conf",
+    "reason"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "verdict"
+    },
+    "step_id": {
+     "type": "string"
+    },
+    "pass": {
+     "type": "boolean"
+    },
+    "abstain": {
+     "type": "boolean"
+    },
+    "conf": {
+     "$ref": "#/$defs/conf"
+    },
+    "reason": {
+     "type": "string"
+    },
+    "offset_pins": {
+     "type": "integer"
+    }
+   }
+  },
+  "parts": {
+   "description": "Server to client: parts read from a parts_scan, each to be confirmed by the user.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "items"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "parts"
+    },
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/part"
+     }
+    }
+   }
+  },
+  "market_results": {
+   "description": "Server to client: the market_response for a market request.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "result"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "market_results"
+    },
+    "result": {
+     "$ref": "#/$defs/market_response"
+    }
+   }
+  },
+  "summary": {
+   "description": "Server to client after hang-up: done, failed, what to buy.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "text"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "summary"
+    },
+    "text": {
+     "type": "string"
+    },
+    "done": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "failed": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "to_buy": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "annotated": {
+   "description": "Server to client in photo mode: the photo with the arrow and diagram inset drawn on it.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "seq",
+    "png_b64"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "annotated"
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "png_b64": {
+     "type": "string"
+    }
+   }
+  },
+  "error": {
+   "description": "Server to client: something was refused or failed. code refused_part and power_off_required are safety gate outcomes.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "code",
+    "message"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "type": {
+     "const": "error"
+    },
+    "code": {
+     "enum": [
+      "bad_message",
+      "power_off_required",
+      "refused_part",
+      "vision_unavailable",
+      "stale_frame",
+      "internal"
+     ]
+    },
+    "message": {
+     "type": "string"
+    }
+   }
+  },
+  "identify_request": {
+   "description": "Server to vision: POST /identify. Closed-set: which item is the user holding.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "image_b64",
+    "candidates"
+   ],
+   "properties": {
+    "image_b64": {
+     "$ref": "#/$defs/jpeg_b64"
+    },
+    "candidates": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/item"
+     },
+     "minItems": 1
+    }
+   }
+  },
+  "identify_response": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "item",
+    "conf",
+    "ms"
+   ],
+   "properties": {
+    "item": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/item"
+      },
+      {
+       "const": "unknown"
+      }
+     ]
+    },
+    "conf": {
+     "$ref": "#/$defs/conf"
+    },
+    "bbox": {
+     "$ref": "#/$defs/bbox"
+    },
+    "ms": {
+     "type": "number",
+     "minimum": 0
+    }
+   }
+  },
+  "locate_request": {
+   "description": "Server to vision: POST /locate. Where is this header on the frame.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "image_b64",
+    "board_id",
+    "header"
+   ],
+   "properties": {
+    "image_b64": {
+     "$ref": "#/$defs/jpeg_b64"
+    },
+    "board_id": {
+     "type": "string"
+    },
+    "header": {
+     "type": "string"
+    },
+    "want_pins": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 1
+     }
+    }
+   }
+  },
+  "locate_response": {
+   "description": "pins present only when the grid fit ran. pin_ok is computed in code (residual under threshold AND keyed gap found), never by a VLM. found false means not visible.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "found",
+    "conf",
+    "ms"
+   ],
+   "properties": {
+    "found": {
+     "type": "boolean"
+    },
+    "bbox": {
+     "$ref": "#/$defs/bbox"
+    },
+    "source": {
+     "enum": [
+      "ocr",
+      "landmarks",
+      "yolo",
+      "fake"
+     ]
+    },
+    "conf": {
+     "$ref": "#/$defs/conf"
+    },
+    "blur": {
+     "type": "boolean"
+    },
+    "glare": {
+     "type": "boolean"
+    },
+    "others": {
+     "description": "Other headers seen in the frame (drawn grey, or red when the user aims at them).",
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "header",
+       "bbox",
+       "conf"
+      ],
+      "properties": {
+       "header": {
+        "type": "string"
+       },
+       "bbox": {
+        "$ref": "#/$defs/bbox"
+       },
+       "conf": {
+        "$ref": "#/$defs/conf"
+       }
+      }
+     }
+    },
+    "pins": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "grid",
+      "pin1",
+      "residual",
+      "keyed_gap",
+      "pin_ok"
+     ],
+     "properties": {
+      "grid": {
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/point"
+       }
+      },
+      "pin1": {
+       "$ref": "#/$defs/point"
+      },
+      "residual": {
+       "type": "number",
+       "minimum": 0
+      },
+      "keyed_gap": {
+       "type": "boolean"
+      },
+      "pin_ok": {
+       "type": "boolean"
+      }
+     }
+    },
+    "ms": {
+     "type": "number",
+     "minimum": 0
+    }
+   }
+  },
+  "verify_request": {
+   "description": "Server to vision: POST /verify. Is the item seated on the right header and pins.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "image_b64",
+    "board_id",
+    "header",
+    "expect"
+   ],
+   "properties": {
+    "image_b64": {
+     "$ref": "#/$defs/jpeg_b64"
+    },
+    "board_id": {
+     "type": "string"
+    },
+    "header": {
+     "type": "string"
+    },
+    "expect": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "item"
+     ],
+     "properties": {
+      "item": {
+       "$ref": "#/$defs/item"
+      },
+      "pins": {
+       "type": "array",
+       "items": {
+        "type": "integer",
+        "minimum": 1
+       }
+      }
+     }
+    }
+   }
+  },
+  "verify_response": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "pass",
+    "conf",
+    "reason",
+    "ms"
+   ],
+   "properties": {
+    "pass": {
+     "type": "boolean"
+    },
+    "abstain": {
+     "type": "boolean"
+    },
+    "conf": {
+     "$ref": "#/$defs/conf"
+    },
+    "offset_pins": {
+     "type": "integer"
+    },
+    "seen_header": {
+     "type": "string"
+    },
+    "reason": {
+     "type": "string"
+    },
+    "ms": {
+     "type": "number",
+     "minimum": 0
+    }
+   }
+  },
+  "health_response": {
+   "description": "Vision GET /health.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "ok",
+    "models"
+   ],
+   "properties": {
+    "ok": {
+     "type": "boolean"
+    },
+    "models": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "gpu": {
+     "type": "string"
+    },
+    "fake": {
+     "type": "boolean"
+    }
+   }
+  },
+  "voice_say": {
+   "description": "Orchestrator to voice adapter: speak this. Cartesia receives only the AI's own sentences.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "type",
+    "utterance_id",
+    "text"
+   ],
+   "properties": {
+    "type": {
+     "const": "say"
+    },
+    "utterance_id": {
+     "type": "string"
+    },
+    "text": {
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
+  "voice_transcript": {
+   "description": "Voice adapter to orchestrator: what the user said.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "type",
+    "text",
+    "final",
+    "ts_ms"
+   ],
+   "properties": {
+    "type": {
+     "const": "transcript"
+    },
+    "text": {
+     "type": "string"
+    },
+    "final": {
+     "type": "boolean"
+    },
+    "ts_ms": {
+     "type": "integer",
+     "minimum": 0
+    }
+   }
+  },
+  "voice_barge_in": {
+   "description": "Voice adapter to orchestrator: user spoke over utterance_id; TTS already stopped at at_ms.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "type",
+    "utterance_id",
+    "at_ms"
+   ],
+   "properties": {
+    "type": {
+     "const": "barge_in"
+    },
+    "utterance_id": {
+     "type": "string"
+    },
+    "at_ms": {
+     "type": "integer",
+     "minimum": 0
+    }
+   }
+  },
+  "voice_spoken": {
+   "description": "Voice adapter to orchestrator: utterance finished playing.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "type",
+    "utterance_id"
+   ],
+   "properties": {
+    "type": {
+     "const": "spoken"
+    },
+    "utterance_id": {
+     "type": "string"
+    }
+   }
+  },
+  "part_category": {
+   "enum": [
+    "cpu",
+    "board",
+    "ram",
+    "ssd",
+    "gpu",
+    "psu",
+    "cooler",
+    "case",
+    "fan"
+   ]
+  },
+  "part_specs": {
+   "description": "Every field optional. A missing field means unknown, and compat marks it unverified, never fits.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "socket": {
+     "type": "string"
+    },
+    "ddr_gen": {
+     "enum": [
+      "DDR4",
+      "DDR5"
+     ]
+    },
+    "dimm_format": {
+     "enum": [
+      "DIMM",
+      "SODIMM"
+     ]
+    },
+    "ecc": {
+     "type": "boolean"
+    },
+    "buffered": {
+     "type": "boolean"
+    },
+    "speed_mts": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "max_speed_mts": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "capacity_gb": {
+     "type": "number",
+     "minimum": 0
+    },
+    "max_capacity_gb": {
+     "type": "number",
+     "minimum": 0
+    },
+    "dimm_slots": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "modules": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "form_factor": {
+     "type": "string"
+    },
+    "tdp_w": {
+     "type": "number",
+     "minimum": 0
+    },
+    "wattage_w": {
+     "type": "number",
+     "minimum": 0
+    },
+    "height_mm": {
+     "type": "number",
+     "minimum": 0
+    },
+    "cooler_clearance_mm": {
+     "type": "number",
+     "minimum": 0
+    },
+    "pcie_gen": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "m2_key": {
+     "type": "string"
+    }
+   }
+  },
+  "part": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "category",
+    "model",
+    "specs",
+    "confirmed"
+   ],
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "category": {
+     "$ref": "#/$defs/part_category"
+    },
+    "brand": {
+     "type": "string"
+    },
+    "model": {
+     "type": "string"
+    },
+    "specs": {
+     "$ref": "#/$defs/part_specs"
+    },
+    "source": {
+     "enum": [
+      "scan",
+      "typed",
+      "fixture"
+     ]
+    },
+    "confirmed": {
+     "type": "boolean"
+    }
+   }
+  },
+  "market_query": {
+   "description": "Server to market module: find options in category that fit the owned parts.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "category",
+    "owned_parts"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "category": {
+     "$ref": "#/$defs/part_category"
+    },
+    "owned_parts": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/part"
+     }
+    },
+    "budget_usd": {
+     "type": "number",
+     "minimum": 0
+    },
+    "max_results": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 10
+    }
+   }
+  },
+  "compat": {
+   "description": "Decided by market/compat.py in code. status fits only when every rule checked passed and nothing was unknown.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "status",
+    "reasons",
+    "unknown"
+   ],
+   "properties": {
+    "status": {
+     "enum": [
+      "fits",
+      "no",
+      "unverified"
+     ]
+    },
+    "reasons": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "unknown": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "offer": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "title",
+    "retailer",
+    "price_usd",
+    "url",
+    "source",
+    "fetched_at",
+    "compat"
+   ],
+   "properties": {
+    "title": {
+     "type": "string"
+    },
+    "retailer": {
+     "type": "string"
+    },
+    "price_usd": {
+     "type": "number",
+     "minimum": 0
+    },
+    "shipping_usd": {
+     "type": "number",
+     "minimum": 0
+    },
+    "condition": {
+     "enum": [
+      "new",
+      "used",
+      "refurbished"
+     ]
+    },
+    "url": {
+     "type": "string"
+    },
+    "specs": {
+     "$ref": "#/$defs/part_specs"
+    },
+    "source": {
+     "enum": [
+      "apify",
+      "brightdata",
+      "cache",
+      "fixture"
+     ]
+    },
+    "fetched_at": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "compat": {
+     "$ref": "#/$defs/compat"
+    },
+    "explain": {
+     "type": "string"
+    }
+   }
+  },
+  "market_response": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "query_key",
+    "category",
+    "items"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v"
+    },
+    "query_key": {
+     "type": "string"
+    },
+    "category": {
+     "$ref": "#/$defs/part_category"
+    },
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/offer"
+     }
+    },
+    "note": {
+     "type": "string"
+    }
+   }
+  },
+  "header_table": {
+   "description": "data/boards/<board_id>.json. Hand-checked against the exact board revision; checked_by is required on every header.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "board_id",
+    "model",
+    "headers"
+   ],
+   "properties": {
+    "board_id": {
+     "type": "string"
+    },
+    "model": {
+     "type": "string"
+    },
+    "revision": {
+     "type": "string"
+    },
+    "manual_url": {
+     "type": "string"
+    },
+    "fixture": {
+     "type": "boolean",
+     "description": "true for made-up demo data that is not a real board."
+    },
+    "specs": {
+     "$ref": "#/$defs/part_specs"
+    },
+    "headers": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "name",
+       "accepts",
+       "rows",
+       "cols",
+       "checked_by"
+      ],
+      "properties": {
+       "name": {
+        "type": "string"
+       },
+       "silkscreen": {
+        "type": "string"
+       },
+       "accepts": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/item"
+        }
+       },
+       "diagram_page": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "diagram_img": {
+        "type": "string"
+       },
+       "rows": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "cols": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "pin1": {
+        "type": "string"
+       },
+       "keyed_pin": {
+        "type": "integer",
+        "minimum": 1
+       },
+       "pins": {
+        "type": "object",
+        "additionalProperties": {
+         "type": "string"
+        }
+       },
+       "checked_by": {
+        "type": "string",
+        "minLength": 1
+       }
+      }
+     }
+    },
+    "rules": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "text"
+      ],
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "text": {
+        "type": "string"
+       },
+       "source_page": {
+        "type": "integer",
+        "minimum": 1
+       }
+      }
+     }
+    }
+   }
+  },
+  "client_message": {
+   "oneOf": [
+    {
+     "$ref": "#/$defs/hello"
+    },
+    {
+     "$ref": "#/$defs/project_open"
+    },
+    {
+     "$ref": "#/$defs/frame"
+    },
+    {
+     "$ref": "#/$defs/photo"
+    },
+    {
+     "$ref": "#/$defs/confirm"
+    },
+    {
+     "$ref": "#/$defs/user_text"
+    },
+    {
+     "$ref": "#/$defs/parts_scan"
+    },
+    {
+     "$ref": "#/$defs/market"
+    },
+    {
+     "$ref": "#/$defs/audio"
+    }
+   ]
+  },
+  "server_message": {
+   "oneOf": [
+    {
+     "$ref": "#/$defs/overlay"
+    },
+    {
+     "$ref": "#/$defs/say"
+    },
+    {
+     "$ref": "#/$defs/step"
+    },
+    {
+     "$ref": "#/$defs/verdict"
+    },
+    {
+     "$ref": "#/$defs/parts"
+    },
+    {
+     "$ref": "#/$defs/market_results"
+    },
+    {
+     "$ref": "#/$defs/summary"
+    },
+    {
+     "$ref": "#/$defs/annotated"
+    },
+    {
+     "$ref": "#/$defs/error"
+    },
+    {
+     "$ref": "#/$defs/audio"
+    }
+   ]
+  },
+  "v2": {
+   "const": 2
+  },
+  "agent_id": {
+   "enum": [
+    "helper",
+    "shopper"
+   ],
+   "description": "Which on-screen agent speaks or draws."
+  },
+  "pack_id": {
+   "enum": [
+    "general",
+    "pc_build",
+    "cooking",
+    "assemble",
+    "memory",
+    "home"
+   ],
+   "description": "Skill pack. pc_build keeps the v1 safety gate. memory is the calm memory aid (fixed pill line, no dosing)."
+  },
+  "agent_presence_state": {
+   "enum": [
+    "idle",
+    "listening",
+    "thinking",
+    "speaking"
+   ]
+  },
+  "draw_role": {
+   "enum": [
+    "target",
+    "info",
+    "warn",
+    "ok"
+   ]
+  },
+  "draw_op": {
+   "description": "One drawing command. Coordinates normalized 0..1 of the frame with seq.",
+   "oneOf": [
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind",
+      "id",
+      "bbox"
+     ],
+     "properties": {
+      "kind": {
+       "const": "box"
+      },
+      "id": {
+       "type": "string"
+      },
+      "role": {
+       "$ref": "#/$defs/draw_role"
+      },
+      "label": {
+       "type": "string"
+      },
+      "ttl_ms": {
+       "type": "integer",
+       "minimum": 0,
+       "description": "0 or missing: stays until cleared."
+      },
+      "bbox": {
+       "$ref": "#/$defs/bbox"
+      },
+      "anchor": {
+       "$ref": "#/$defs/draw_anchor"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind",
+      "id",
+      "bbox"
+     ],
+     "properties": {
+      "kind": {
+       "const": "highlight"
+      },
+      "id": {
+       "type": "string"
+      },
+      "role": {
+       "$ref": "#/$defs/draw_role"
+      },
+      "label": {
+       "type": "string"
+      },
+      "ttl_ms": {
+       "type": "integer",
+       "minimum": 0,
+       "description": "0 or missing: stays until cleared."
+      },
+      "bbox": {
+       "$ref": "#/$defs/bbox"
+      },
+      "anchor": {
+       "$ref": "#/$defs/draw_anchor"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind",
+      "id",
+      "center",
+      "r"
+     ],
+     "properties": {
+      "kind": {
+       "const": "circle"
+      },
+      "id": {
+       "type": "string"
+      },
+      "role": {
+       "$ref": "#/$defs/draw_role"
+      },
+      "label": {
+       "type": "string"
+      },
+      "ttl_ms": {
+       "type": "integer",
+       "minimum": 0,
+       "description": "0 or missing: stays until cleared."
+      },
+      "center": {
+       "$ref": "#/$defs/point"
+      },
+      "r": {
+       "$ref": "#/$defs/unit"
+      },
+      "anchor": {
+       "$ref": "#/$defs/draw_anchor"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind",
+      "id",
+      "from",
+      "to"
+     ],
+     "properties": {
+      "kind": {
+       "const": "arrow"
+      },
+      "id": {
+       "type": "string"
+      },
+      "role": {
+       "$ref": "#/$defs/draw_role"
+      },
+      "label": {
+       "type": "string"
+      },
+      "ttl_ms": {
+       "type": "integer",
+       "minimum": 0,
+       "description": "0 or missing: stays until cleared."
+      },
+      "from": {
+       "$ref": "#/$defs/point"
+      },
+      "to": {
+       "$ref": "#/$defs/point"
+      },
+      "anchor": {
+       "$ref": "#/$defs/draw_anchor"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind",
+      "id",
+      "points"
+     ],
+     "properties": {
+      "kind": {
+       "const": "path"
+      },
+      "id": {
+       "type": "string"
+      },
+      "role": {
+       "$ref": "#/$defs/draw_role"
+      },
+      "label": {
+       "type": "string"
+      },
+      "ttl_ms": {
+       "type": "integer",
+       "minimum": 0,
+       "description": "0 or missing: stays until cleared."
+      },
+      "points": {
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/point"
+       },
+       "minItems": 2
+      },
+      "anchor": {
+       "$ref": "#/$defs/draw_anchor"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind",
+      "id",
+      "at",
+      "text"
+     ],
+     "properties": {
+      "kind": {
+       "const": "label"
+      },
+      "id": {
+       "type": "string"
+      },
+      "role": {
+       "$ref": "#/$defs/draw_role"
+      },
+      "label": {
+       "type": "string"
+      },
+      "ttl_ms": {
+       "type": "integer",
+       "minimum": 0,
+       "description": "0 or missing: stays until cleared."
+      },
+      "at": {
+       "$ref": "#/$defs/point"
+      },
+      "text": {
+       "type": "string",
+       "minLength": 1
+      },
+      "anchor": {
+       "$ref": "#/$defs/draw_anchor"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind",
+      "id",
+      "at"
+     ],
+     "properties": {
+      "kind": {
+       "const": "pin"
+      },
+      "id": {
+       "type": "string"
+      },
+      "role": {
+       "$ref": "#/$defs/draw_role"
+      },
+      "label": {
+       "type": "string"
+      },
+      "ttl_ms": {
+       "type": "integer",
+       "minimum": 0,
+       "description": "0 or missing: stays until cleared."
+      },
+      "at": {
+       "$ref": "#/$defs/point"
+      },
+      "anchor": {
+       "$ref": "#/$defs/draw_anchor"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind",
+      "id"
+     ],
+     "properties": {
+      "kind": {
+       "const": "clear"
+      },
+      "id": {
+       "type": "string"
+      },
+      "role": {
+       "$ref": "#/$defs/draw_role"
+      },
+      "label": {
+       "type": "string"
+      },
+      "ttl_ms": {
+       "type": "integer",
+       "minimum": 0,
+       "description": "0 or missing: stays until cleared."
+      },
+      "anchor": {
+       "$ref": "#/$defs/draw_anchor"
+      }
+     }
+    }
+   ]
+  },
+  "v2_hello": {
+   "description": "Client to server, first message on WS /ws2.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "pack"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "hello"
+    },
+    "session_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "pack": {
+     "$ref": "#/$defs/pack_id"
+    },
+    "board_id": {
+     "type": "string"
+    },
+    "client": {
+     "enum": [
+      "web",
+      "ios"
+     ]
+    },
+    "tts": {
+     "enum": [
+      "server",
+      "browser"
+     ],
+     "description": "server: send audio chunks (Cartesia). browser: client speaks say text."
+    },
+    "stt": {
+     "enum": [
+      "browser",
+      "server"
+     ],
+     "description": "browser: Web Speech API sends user_text. server: client streams v2_audio_in and the server transcribes (Whisper on the GPU box)."
+    },
+    "camera": {
+     "type": "boolean",
+     "description": "false: voice only; the server makes no scene calls and attaches no frame."
+    },
+    "voice": {
+     "type": "string",
+     "pattern": "^[a-z0-9_:-]{1,64}$",
+     "description": "Optional server TTS voice: a Kokoro voice id (af_kore) or cartesia:<voice id>. Unknown ids fall back to the server default."
+    },
+    "role": {
+     "enum": [
+      "call",
+      "camera"
+     ],
+     "description": "call (default): the device that talks. camera: a second device that only streams frames into the call named by pair_code."
+    },
+    "pair_code": {
+     "type": "string",
+     "pattern": "^(?:[0-9]{4,8}|[A-HJ-NP-Z2-9]{8,12})$",
+     "description": "With role camera: the single-use code the call device got in v2_pair. Without it, the camera joins the latest live call of the same signed-in Cloudflare Access identity (remember this phone); a shared token or an open server never qualifies."
+    },
+    "rewind": {
+     "type": "boolean",
+     "description": "true: Rewind on from the start (clips of this call go to TwelveLabs). Default off."
+    },
+    "private": {
+     "type": "boolean",
+     "description": "Private mode for this call: nothing leaves our own machines (local brain, Kokoro voice, server STT, no crops, no Rewind cloud)."
+    },
+    "cloud": {
+     "type": "object",
+     "additionalProperties": false,
+     "properties": {
+      "claude": {
+       "type": "boolean"
+      },
+      "cartesia": {
+       "type": "boolean"
+      },
+      "twelvelabs": {
+       "type": "boolean"
+      }
+     },
+     "description": "Home first: per-call cloud switches. claude = Smarter answers (question + written scene note, sometimes one small close-up); cartesia = Natural voice (reply sentence only); twelvelabs = Video memory search (short silent clips, deleted at call end). Missing: Claude on, Cartesia on, TwelveLabs off (on if rewind). private: all off."
+    }
+   }
+  },
+  "v2_frame": {
+   "description": "Client to server: newest camera frame. The server keeps only the latest one in memory.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "seq",
+    "ts_ms",
+    "w",
+    "h",
+    "jpeg_b64"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "frame"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "ts_ms": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "w": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "h": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "jpeg_b64": {
+     "$ref": "#/$defs/jpeg_b64"
+    }
+   }
+  },
+  "v2_user_text": {
+   "description": "Client to server: what the user said (browser STT or Whisper) or typed. final false is an interim result.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "text",
+    "final"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "user_text"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "text": {
+     "type": "string",
+     "minLength": 1
+    },
+    "final": {
+     "type": "boolean"
+    },
+    "source": {
+     "enum": [
+      "browser_stt",
+      "whisper",
+      "typed"
+     ]
+    }
+   }
+  },
+  "v2_barge_in": {
+   "description": "Client to server: the user started talking over utterance_id; the client already stopped playback.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "utterance_id",
+    "at_ms"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "barge_in"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "utterance_id": {
+     "type": "string"
+    },
+    "at_ms": {
+     "type": "integer",
+     "minimum": 0
+    }
+   }
+  },
+  "v2_confirm": {
+   "description": "Client to server: a button press (power_off is required by the pc_build pack before guidance).",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "what",
+    "value"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "confirm"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "what": {
+     "enum": [
+      "power_off",
+      "seated",
+      "check_again",
+      "next",
+      "stop"
+     ]
+    },
+    "value": {
+     "type": "boolean"
+    }
+   }
+  },
+  "v2_draw": {
+   "description": "Server to client: drawing commands from one agent for the frame with seq.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "agent",
+    "seq",
+    "ops"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "draw"
+    },
+    "agent": {
+     "$ref": "#/$defs/agent_id"
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "ops": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/draw_op"
+     }
+    }
+   }
+  },
+  "v2_say": {
+   "description": "Server to client: one agent's sentence (caption; spoken by the browser when tts is browser). Streaming turns send one say per sentence with the same turn_id and increasing part.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "agent",
+    "utterance_id",
+    "text"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "say"
+    },
+    "agent": {
+     "$ref": "#/$defs/agent_id"
+    },
+    "utterance_id": {
+     "type": "string"
+    },
+    "text": {
+     "type": "string",
+     "minLength": 1
+    },
+    "turn_id": {
+     "type": "string"
+    },
+    "part": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "final": {
+     "type": "boolean",
+     "description": "Streaming: a turn is spoken sentence by sentence; final true on the last part."
+    }
+   }
+  },
+  "v2_audio": {
+   "description": "Server to client: TTS audio for utterance_id, 16 kHz mono PCM16. final true on the last chunk.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "agent",
+    "utterance_id",
+    "pcm16_b64"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "audio"
+    },
+    "agent": {
+     "$ref": "#/$defs/agent_id"
+    },
+    "utterance_id": {
+     "type": "string"
+    },
+    "sample_rate": {
+     "const": 16000
+    },
+    "pcm16_b64": {
+     "type": "string"
+    },
+    "final": {
+     "type": "boolean"
+    }
+   }
+  },
+  "v2_agent_state": {
+   "description": "Server to client: drives the on-screen presence. focus is where the agent is looking or pointing.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "agent",
+    "state"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "agent_state"
+    },
+    "agent": {
+     "$ref": "#/$defs/agent_id"
+    },
+    "state": {
+     "$ref": "#/$defs/agent_presence_state"
+    },
+    "focus": {
+     "$ref": "#/$defs/point"
+    }
+   }
+  },
+  "v2_market_results": {
+   "description": "Server to client: the shopper agent's offers.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "agent",
+    "result"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "market_results"
+    },
+    "agent": {
+     "const": "shopper"
+    },
+    "result": {
+     "oneOf": [
+      {
+       "$ref": "#/$defs/market_response"
+      },
+      {
+       "$ref": "#/$defs/shopping_response"
+      }
+     ]
+    }
+   }
+  },
+  "v2_error": {
+   "description": "Server to client on /ws2.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "code",
+    "message"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "error"
+    },
+    "code": {
+     "enum": [
+      "bad_message",
+      "power_off_required",
+      "refused",
+      "vision_unavailable",
+      "brain_unavailable",
+      "internal"
+     ]
+    },
+    "message": {
+     "type": "string"
+    }
+   }
+  },
+  "scene_object": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "id",
+    "label",
+    "bbox",
+    "conf"
+   ],
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "label": {
+     "type": "string"
+    },
+    "bbox": {
+     "$ref": "#/$defs/bbox"
+    },
+    "conf": {
+     "$ref": "#/$defs/conf"
+    }
+   }
+  },
+  "scene_request": {
+   "description": "Server to vision: POST /scene. Describe the frame and ground objects; queries are things the brain wants located.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "image_b64"
+   ],
+   "properties": {
+    "image_b64": {
+     "$ref": "#/$defs/jpeg_b64"
+    },
+    "queries": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "maxItems": 8
+    },
+    "max_objects": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 20
+    },
+    "caption": {
+     "type": "boolean",
+     "description": "true: always return a caption, also when queries are given (keyframe scans)."
+    }
+   }
+  },
+  "scene_response": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "caption",
+    "objects",
+    "ms"
+   ],
+   "properties": {
+    "caption": {
+     "type": "string"
+    },
+    "objects": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/scene_object"
+     }
+    },
+    "source": {
+     "enum": [
+      "ollama",
+      "claude",
+      "fake"
+     ]
+    },
+    "ms": {
+     "type": "number",
+     "minimum": 0
+    }
+   }
+  },
+  "brain_turn": {
+   "description": "What the brain returns for one turn (server internal, validated before sending). Draw ops may reference scene object ids via target instead of coordinates; the server resolves them.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "agent",
+    "say",
+    "draw"
+   ],
+   "properties": {
+    "agent": {
+     "$ref": "#/$defs/agent_id"
+    },
+    "say": {
+     "type": "string"
+    },
+    "draw": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "kind"
+      ],
+      "properties": {
+       "kind": {
+        "enum": [
+         "box",
+         "highlight",
+         "circle",
+         "arrow",
+         "label",
+         "pin",
+         "path",
+         "clear"
+        ]
+       },
+       "target": {
+        "type": "string",
+        "description": "scene object id"
+       },
+       "from_target": {
+        "type": "string"
+       },
+       "text": {
+        "type": "string"
+       },
+       "role": {
+        "$ref": "#/$defs/draw_role"
+       }
+      }
+     }
+    },
+    "market_category": {
+     "$ref": "#/$defs/part_category"
+    }
+   }
+  },
+  "client_message_v2": {
+   "oneOf": [
+    {
+     "$ref": "#/$defs/v2_hello"
+    },
+    {
+     "$ref": "#/$defs/v2_frame"
+    },
+    {
+     "$ref": "#/$defs/v2_user_text"
+    },
+    {
+     "$ref": "#/$defs/v2_barge_in"
+    },
+    {
+     "$ref": "#/$defs/v2_confirm"
+    },
+    {
+     "$ref": "#/$defs/v2_audio_in"
+    },
+    {
+     "$ref": "#/$defs/v2_camera"
+    },
+    {
+     "$ref": "#/$defs/v2_pair_request"
+    },
+    {
+     "$ref": "#/$defs/v2_rewind"
+    }
+   ]
+  },
+  "server_message_v2": {
+   "oneOf": [
+    {
+     "$ref": "#/$defs/v2_draw"
+    },
+    {
+     "$ref": "#/$defs/v2_say"
+    },
+    {
+     "$ref": "#/$defs/v2_audio"
+    },
+    {
+     "$ref": "#/$defs/v2_agent_state"
+    },
+    {
+     "$ref": "#/$defs/v2_market_results"
+    },
+    {
+     "$ref": "#/$defs/v2_error"
+    },
+    {
+     "$ref": "#/$defs/v2_metrics"
+    },
+    {
+     "$ref": "#/$defs/v2_track"
+    },
+    {
+     "$ref": "#/$defs/v2_turn"
+    },
+    {
+     "$ref": "#/$defs/v2_reply_delta"
+    },
+    {
+     "$ref": "#/$defs/v2_pair"
+    },
+    {
+     "$ref": "#/$defs/v2_pair_status"
+    },
+    {
+     "$ref": "#/$defs/v2_rewind_state"
+    },
+    {
+     "$ref": "#/$defs/v2_rewind_hit"
+    },
+    {
+     "$ref": "#/$defs/v2_rewind_recap"
+    },
+    {
+     "$ref": "#/$defs/v2_find_item"
+    },
+    {
+     "$ref": "#/$defs/v2_memory_state"
+    }
+   ]
+  },
+  "draw_anchor": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "object_id",
+    "bbox"
+   ],
+   "description": "Real time: the object region this op is attached to. The client tracks this region between server updates and moves the op with it.",
+   "properties": {
+    "object_id": {
+     "type": "string"
+    },
+    "bbox": {
+     "$ref": "#/$defs/bbox"
+    }
+   }
+  },
+  "v2_metrics": {
+   "description": "Server to client, dev HUD: timings for one turn or frame, in ms.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "metrics"
+    },
+    "turn_id": {
+     "type": "string"
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "vlm_ms": {
+     "type": "number",
+     "minimum": 0
+    },
+    "brain_first_token_ms": {
+     "type": "number",
+     "minimum": 0
+    },
+    "first_audio_ms": {
+     "type": "number",
+     "minimum": 0
+    },
+    "turn_ms": {
+     "type": "number",
+     "minimum": 0
+    },
+    "track_ms": {
+     "type": "number",
+     "minimum": 0
+    },
+    "stt_ms": {
+     "type": "number",
+     "minimum": 0,
+     "description": "Server STT: final audio received to transcript ready."
+    },
+    "tts_ms": {
+     "type": "number",
+     "minimum": 0,
+     "description": "First spoken clause sent to its first audio chunk."
+    }
+   }
+  },
+  "v2_track": {
+   "description": "Server to client, fast loop (detector at about 10 to 15 fps when available): fresh boxes for anchored objects.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "seq",
+    "objects"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "track"
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "objects": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/scene_object"
+     }
+    }
+   }
+  },
+  "v2_audio_in": {
+   "description": "Client to server when stt is server: mic audio, 16 kHz mono PCM16. The client cuts utterances with a simple voice activity check; final true ends one utterance.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "seq",
+    "pcm16_b64"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "audio_in"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "seq": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "sample_rate": {
+     "const": 16000
+    },
+    "pcm16_b64": {
+     "type": "string"
+    },
+    "final": {
+     "type": "boolean"
+    }
+   }
+  },
+  "v2_turn": {
+   "description": "Server to client: where a user turn is, sent at once on arrival (stage received, the ack) and at every stage change, so the client never waits silently. at_ms is server time in epoch ms.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "turn_id",
+    "stage",
+    "at_ms"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "turn"
+    },
+    "turn_id": {
+     "type": "string"
+    },
+    "stage": {
+     "enum": [
+      "received",
+      "transcribing",
+      "thinking",
+      "backup",
+      "speaking",
+      "done",
+      "failed",
+      "cancelled",
+      "expert",
+      "expert_done"
+     ],
+     "description": "expert: the talker called the expert model and is waiting for it (detail names the model); expert_done: its answer arrived, timed out (detail) or was cancelled."
+    },
+    "at_ms": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "text": {
+     "type": "string",
+     "description": "What the server heard (received or after transcribing)."
+    },
+    "detail": {
+     "type": "string",
+     "description": "Short human reason, for example 'brain slow, trying backup' or 'nothing heard'."
+    },
+    "typical_ms": {
+     "type": "integer",
+     "minimum": 0,
+     "description": "Median of the last 5 turns, end of speech to first spoken text."
+    }
+   }
+  },
+  "v2_reply_delta": {
+   "description": "Server to client: reply text as it is generated, before sentences are complete. Display only; v2_say stays the unit for speech.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "agent",
+    "turn_id",
+    "text"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "reply_delta"
+    },
+    "agent": {
+     "$ref": "#/$defs/agent_id"
+    },
+    "turn_id": {
+     "type": "string"
+    },
+    "text": {
+     "type": "string"
+    }
+   }
+  },
+  "v2_camera": {
+   "description": "Client to server: camera turned on or off during a session. Off drops the stored frame and stops scene calls.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "on"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "camera"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "on": {
+     "type": "boolean"
+    }
+   }
+  },
+  "v2_pair_request": {
+   "description": "Client (call device) to server: ask for a pair code so a phone can join this session as its camera.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "pair_request"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "kick": {
+     "type": "boolean",
+     "description": "true: disconnect the phone paired to this call instead of asking for a code. A remembered phone then waits for the next call."
+    }
+   }
+  },
+  "v2_pair": {
+   "description": "Server to the call device: a single-use pair code. Open /agent.html?pair=<code> on the phone, or send hello{role:camera, pair_code} from an app.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "code",
+    "expires_in_s"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "pair"
+    },
+    "code": {
+     "type": "string",
+     "pattern": "^(?:[0-9]{4,8}|[A-HJ-NP-Z2-9]{8,12})$"
+    },
+    "expires_in_s": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "path": {
+     "type": "string",
+     "description": "Relative link for the phone, for example /agent.html?pair=ABCD2345&join=<single-use-secret>"
+    }
+   }
+  },
+  "v2_pair_status": {
+   "description": "Server to both devices: pairing and camera state. joined and left describe the camera device; rejected and expired go to a camera socket whose code failed.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "state"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "pair_status"
+    },
+    "state": {
+     "enum": [
+      "joined",
+      "left",
+      "camera",
+      "rejected",
+      "expired"
+     ]
+    },
+    "role": {
+     "enum": [
+      "call",
+      "camera"
+     ],
+     "description": "Which device this message is sent to."
+    },
+    "camera_on": {
+     "type": "boolean"
+    },
+    "source": {
+     "enum": [
+      "call",
+      "camera"
+     ],
+     "description": "Which device the frames come from now."
+    },
+    "detail": {
+     "type": "string"
+    },
+    "retry_s": {
+     "type": "integer",
+     "minimum": 1,
+     "description": "Sent to a camera socket that may try again: no call yet for this signed-in identity, the call already has a phone, or the call ended or disconnected it. A phone with 'remember this phone' on reconnects after this many seconds."
+    }
+   }
+  },
+  "v2_rewind": {
+   "description": "Client to server: Rewind switched on or off. On keeps short clips around keyframes and uploads them to TwelveLabs for search; off drops unsent clips.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "session_id",
+    "on"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "rewind"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "on": {
+     "type": "boolean"
+    },
+    "keep": {
+     "type": "boolean",
+     "description": "true: keep this call's TwelveLabs videos after the call. Default false: they are deleted when the call ends."
+    }
+   }
+  },
+  "v2_rewind_state": {
+   "description": "Server to client: Rewind status after a switch or upload. notice is the one-line upload notice to show while on.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "on"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "rewind_state"
+    },
+    "on": {
+     "type": "boolean"
+    },
+    "clips": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "ready": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "indexing": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "pending": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "notice": {
+     "type": "string"
+    },
+    "locked": {
+     "type": "boolean",
+     "description": "true: LOCAL_ONLY=1 on the server, Rewind cloud cannot be turned on."
+    }
+   }
+  },
+  "v2_rewind_hit": {
+   "description": "Server to client: the call moment that answers a Rewind question. Times are seconds since the call started. sure is false when our own vision did not confirm the object in the frame; objects are boxes on frame_b64, not on the live picture.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "query",
+    "t_s",
+    "start_s",
+    "end_s",
+    "sure"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "rewind_hit"
+    },
+    "turn_id": {
+     "type": "string"
+    },
+    "query": {
+     "type": "string"
+    },
+    "t_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "start_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "end_s": {
+     "type": "number",
+     "minimum": 0
+    },
+    "sure": {
+     "type": "boolean"
+    },
+    "alternatives": {
+     "type": "array",
+     "items": {
+      "type": "number",
+      "minimum": 0
+     },
+     "maxItems": 3
+    },
+    "frame_b64": {
+     "$ref": "#/$defs/jpeg_b64"
+    },
+    "objects": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/scene_object"
+     }
+    }
+   }
+  },
+  "v2_rewind_recap": {
+   "description": "Server to client: a Rewind recap of the call from clips already uploaded while Rewind was on. steps are in call order (t_s = seconds since the call started); skipped names typical steps of the current mode that look skipped.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "steps",
+    "skipped"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "rewind_recap"
+    },
+    "turn_id": {
+     "type": "string"
+    },
+    "steps": {
+     "type": "array",
+     "maxItems": 12,
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "t_s",
+       "text"
+      ],
+      "properties": {
+       "t_s": {
+        "type": "number",
+        "minimum": 0
+       },
+       "text": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "skipped": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "v2_find_item": {
+   "description": "Server to client: where an object was last seen, from the person's local memory across calls. Carries the rewind_hit fields so the same card renders it: frame_b64 is a small crop of the item (never a full frame) and objects box the item on it; t_s is seconds since this call started (negative for an earlier call). live points at the item or its last place in the current view.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "item",
+    "found",
+    "count"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "find_item"
+    },
+    "turn_id": {
+     "type": "string"
+    },
+    "item": {
+     "type": "string"
+    },
+    "found": {
+     "type": "boolean"
+    },
+    "at_ms": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "when": {
+     "type": "string"
+    },
+    "place": {
+     "type": "string"
+    },
+    "home": {
+     "type": "string"
+    },
+    "say": {
+     "type": "string"
+    },
+    "live": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "object_id",
+      "bbox"
+     ],
+     "properties": {
+      "object_id": {
+       "type": "string"
+      },
+      "bbox": {
+       "$ref": "#/$defs/bbox"
+      }
+     }
+    },
+    "count": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "count_item": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "t_s": {
+     "type": "number",
+     "description": "Seconds since this call started; negative for an earlier call."
+    },
+    "start_s": {
+     "type": "number"
+    },
+    "end_s": {
+     "type": "number"
+    },
+    "sure": {
+     "type": "boolean"
+    },
+    "alternatives": {
+     "type": "array",
+     "items": {
+      "type": "number"
+     },
+     "maxItems": 3
+    },
+    "frame_b64": {
+     "$ref": "#/$defs/jpeg_b64"
+    },
+    "objects": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/scene_object"
+     }
+    }
+   }
+  },
+  "v2_memory_state": {
+   "description": "Server to client: local memory status after a tag or forget. count is the notes kept today; encrypted false means file-system protection only. After \"forget that\", item and count_item give the memories left about that item.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "type",
+    "on",
+    "count"
+   ],
+   "properties": {
+    "v": {
+     "$ref": "#/$defs/v2"
+    },
+    "type": {
+     "const": "memory_state"
+    },
+    "on": {
+     "type": "boolean"
+    },
+    "memory_id": {
+     "type": "string"
+    },
+    "count": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "crops": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "bytes": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "encrypted": {
+     "type": "boolean"
+    },
+    "retention_days": {
+     "type": "number",
+     "minimum": 0
+    },
+    "item": {
+     "type": "string"
+    },
+    "count_item": {
+     "type": "integer",
+     "minimum": 0
+    }
+   }
+  },
+  "shopping_offer": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "store",
+    "price",
+    "currency",
+    "delivery_days",
+    "pickup_today",
+    "url",
+    "in_stock",
+    "notes",
+    "selected"
+   ],
+   "properties": {
+    "store": {
+     "type": "string",
+     "minLength": 1,
+     "maxLength": 120
+    },
+    "price": {
+     "type": "number",
+     "minimum": 0
+    },
+    "currency": {
+     "type": "string",
+     "pattern": "^[A-Z]{3}$"
+    },
+    "delivery_days": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "minimum": 0
+    },
+    "pickup_today": {
+     "type": "boolean"
+    },
+    "url": {
+     "type": "string",
+     "pattern": "^https?://"
+    },
+    "in_stock": {
+     "type": "boolean"
+    },
+    "notes": {
+     "type": "string",
+     "maxLength": 1000
+    },
+    "selected": {
+     "type": "boolean"
+    }
+   }
+  },
+  "shopping_response": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "v",
+    "product",
+    "items"
+   ],
+   "properties": {
+    "v": {
+     "const": 1
+    },
+    "product": {
+     "type": "string"
+    },
+    "items": {
+     "type": "array",
+     "maxItems": 3,
+     "items": {
+      "$ref": "#/$defs/shopping_offer"
+     }
+    },
+    "note": {
+     "type": "string"
+    }
+   }
+  }
+ }
+}

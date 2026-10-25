@@ -1,0 +1,8 @@
+// Base build settings for the AEyeVision target. Committed.
+// AEYE_SERVER_URL is empty by default (the app then shows a "Set server" chip).
+// DEVELOPMENT_TEAM is empty here on purpose; a team id never goes in a tracked file.
+// Local.xcconfig (git-ignored, optional) sets both; copy Local.xcconfig.example to create it.
+AEYE_SERVER_URL =
+DEVELOPMENT_TEAM =
+
+#include? "Local.xcconfig"

@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+httpx
+jsonschema
+python-multipart
+pytest
+websockets
+pillow
+anthropic
+pyjwt[crypto]
+pyserial  # Arduino USB wake bridge

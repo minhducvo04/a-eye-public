@@ -1,0 +1,35 @@
+[
+  {
+    "case_id": "id-cpu-fan",
+    "split": "heldout",
+    "board_id": "demo-b650",
+    "image": "identify.jpg",
+    "task": "identify",
+    "header": "CPU_FAN",
+    "item": "cpu_fan_cable",
+    "pins": [],
+    "truth": {"item": "cpu_fan_cable"}
+  },
+  {
+    "case_id": "loc-fpanel",
+    "split": "heldout",
+    "board_id": "demo-b650",
+    "image": "locate.jpg",
+    "task": "locate",
+    "header": "F_PANEL",
+    "item": "f_panel_bundle",
+    "pins": [5, 6],
+    "truth": {"bbox": [0.5, 0.5, 0.1, 0.04]}
+  },
+  {
+    "case_id": "ver-wrong-plug",
+    "split": "heldout",
+    "board_id": "demo-b650",
+    "image": "verify.jpg",
+    "task": "verify",
+    "header": "F_PANEL",
+    "item": "f_panel_bundle",
+    "pins": [5, 6],
+    "truth": {"pass": false}
+  }
+]

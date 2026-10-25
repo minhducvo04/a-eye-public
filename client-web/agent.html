@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#000000">
+  <title>A-eye</title>
+  <link rel="stylesheet" href="agent.css">
+</head>
+<body>
+  <!-- Icons: stand-ins for the iOS app's SF Symbols. -->
+  <svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z"/><path d="M18.5 14.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"/></symbol>
+    <symbol id="i-desktop" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8.5 20h7M12 16v4"/></symbol>
+    <symbol id="i-pan" viewBox="0 0 24 24"><circle cx="9.5" cy="12.5" r="6"/><path d="M15.5 12.5H22"/></symbol>
+    <symbol id="i-hammer" viewBox="0 0 24 24"><path d="M13 4.5l2-1.5 6 6-1.5 2L13 4.5z"/><path d="M15 8.5L4 19.5l1.5 1.5L16.5 10"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M4 16v-4l2.2-5h11.6L20 12v4z"/><path d="M4 12h16"/><circle cx="7.5" cy="16.5" r="1.8"/><circle cx="16.5" cy="16.5" r="1.8"/></symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3c3.6 4.6 6 7.8 6 11a6 6 0 0 1-12 0c0-3.2 2.4-6.4 6-11z"/></symbol>
+    <symbol id="i-gears" viewBox="0 0 24 24"><circle cx="9" cy="10" r="2.6"/><path d="M9 4.5v2M9 13.5v2M3.5 10h2M12.5 10h2M5.1 6.1l1.4 1.4M11.5 12.5l1.4 1.4M5.1 13.9l1.4-1.4M11.5 7.5l1.4-1.4"/><circle cx="17" cy="17" r="2"/><path d="M17 13.5v1.3M17 19.2v1.3M13.5 17h1.3M19.2 17h1.3"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></symbol>
+    <symbol id="i-mic-off" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M4 4l16 16"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+    <symbol id="i-camera-off" viewBox="0 0 24 24"><path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/><path d="M3 3l18 18"/></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V11M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V5.5a1.5 1.5 0 0 1 3 0V12M17 9.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1.3a6 6 0 0 1-4.7-2.3l-3.4-4.3a1.5 1.5 0 0 1 2.3-1.9L8 14"/></symbol>
+    <symbol id="i-phone-down" viewBox="0 0 24 24"><path class="fill" d="M2.6 13.6c5.2-4.6 13.6-4.6 18.8 0 .5.4.5 1.2 0 1.6l-2 2c-.4.4-1 .4-1.4.1l-2.3-1.7c-.4-.3-.6-.8-.4-1.3l.5-1.6c-2.4-.8-5.2-.8-7.6 0l.5 1.6c.2.5 0 1-.4 1.3l-2.3 1.7c-.4.3-1 .3-1.4-.1l-2-2c-.5-.4-.5-1.2 0-1.6z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><circle class="fill" cx="12" cy="12" r="10"/><path class="cut" d="M12 17V7.5M7.5 11.5L12 7l4.5 4.5"/></symbol>
+    <symbol id="i-rewind" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4 4.5v3.7h3.7"/><path d="M12 8v4.2l2.8 1.8"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.4-3 8-7 9.5-4-1.5-7-5.1-7-9.5V6z"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></symbol>
+    <symbol id="i-dots" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/></symbol>
+  <symbol id="i-bolt-off" viewBox="0 0 24 24"><path d="M13 3L6 13h5l-1 8 7-10h-5z"/><path d="M3.5 3.5l17 17"/></symbol>
+  </svg>
+
+  <main id="stage" class="stage">
+    <video id="camera" playsinline webkit-playsinline muted autoplay></video>
+    <img id="still" class="hidden" alt="">
+    <canvas id="draw" aria-hidden="true"></canvas>
+    <!-- ScanSweep.swift: viewfinder brackets and a sweep while the helper reads the picture. -->
+    <div id="scan" class="scan hidden" aria-hidden="true"><div class="scan-band"></div><svg class="scan-brackets"><path id="scan-path"/></svg></div>
+
+    <!-- Camera screen: gear top left, mode ring at the bottom (RootView.cameraChrome + ModeRing.swift). -->
+    <section id="picker" class="ring-screen" aria-label="Choose a mode">
+      <div class="ring-top">
+        <button type="button" class="glass round r44 open-settings" aria-label="Settings"><svg><use href="#i-gear"/></svg></button>
+        <p class="wordmark" aria-hidden="true">A-eye</p>
+      </div>
+      <!-- First run: what A-eye is and the privacy promise, before anything starts. -->
+      <div class="intro">
+        <h1 class="intro-title">I look, point, and remember.</h1>
+        <p class="intro-text">Show me what you are working on, or ask where you left something. Choose a helper below to start.</p>
+        <p class="intro-note"><svg aria-hidden="true"><use href="#i-shield"/></svg>Video and pictures are not saved unless you turn on Rewind or the memory aid.</p>
+      </div>
+      <div class="ring-bottom">
+        <div class="ring-label" aria-live="polite">
+          <p id="ring-title" class="ring-title">Memory</p>
+          <button type="button" id="ring-hint" class="ring-hint">tap to start</button>
+        </div>
+        <div id="ring" class="ring">
+          <button type="button" data-mode="general" data-pack="general" aria-label="General"><span class="disc"><svg><use href="#i-sparkles"/></svg></span><span class="ring-name" aria-hidden="true">General</span></button>
+          <button type="button" data-mode="pc_build" data-pack="pc_build" aria-label="PC Build"><span class="disc"><svg><use href="#i-desktop"/></svg></span><span class="ring-name" aria-hidden="true">PC Build</span></button>
+          <button type="button" data-mode="cooking" data-pack="cooking" aria-label="Cooking"><span class="disc"><svg><use href="#i-pan"/></svg></span><span class="ring-name" aria-hidden="true">Cooking</span></button>
+          <button type="button" data-mode="assemble" data-pack="assemble" aria-label="Assembly"><span class="disc"><svg><use href="#i-hammer"/></svg></span><span class="ring-name" aria-hidden="true">Assembly</span></button>
+          <button type="button" data-mode="memory" data-pack="memory" aria-label="Memory"><span class="disc"><svg><use href="#i-pin"/></svg></span><span class="ring-name" aria-hidden="true">Memory</span></button>
+          <button type="button" data-mode="mechanic" aria-label="Mechanic, coming soon"><span class="disc"><svg><use href="#i-car"/></svg></span><span class="ring-name" aria-hidden="true">Mechanic</span></button>
+          <button type="button" data-mode="plumbing" data-pack="home" aria-label="Sink"><span class="disc"><svg><use href="#i-drop"/></svg></span><span class="ring-name" aria-hidden="true">Sink</span></button>
+          <button type="button" data-mode="engineering" aria-label="Engineering, coming soon"><span class="disc"><svg><use href="#i-gears"/></svg></span><span class="ring-name" aria-hidden="true">Engineering</span></button>
+          <button type="button" data-mode="gemini-live" data-pack="gemini-live" aria-label="Gemini Live"><span class="disc"><svg><use href="#i-sparkles"/></svg></span><span class="ring-name" aria-hidden="true">Gemini Live</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call screen (CallScreen.swift): pill on top, caption card, power gate, input, bottom bar. -->
+    <section id="call" class="call hidden" aria-label="Call">
+      <div id="headset-panel" class="headset-panel hidden">
+        <h1 id="headset-status" role="status">Waiting for your phone camera</h1>
+        <button type="button" id="headset-sound" class="glass">Enable sound</button>
+        <div id="headset-help">
+          <p>Keep your remembered phone page open. It joins this call automatically.</p>
+          <button type="button" id="headset-pair" class="glass">Pair phone · show QR</button>
+          <p>Vision Pro uses your phone camera, never its own.</p>
+        </div>
+      </div>
+      <div class="top">
+        <div class="pill glass">
+          <span id="presence-dot" class="presence-dot" role="img" aria-label=""></span>
+          <b>A-eye</b><span class="sep" aria-hidden="true">·</span><span id="pack-label">General</span><span class="sep" aria-hidden="true">·</span><span id="elapsed" class="digits">0:00</span>
+        </div>
+        <!-- Status badges under the pill (one style): Private, Rewind on (+ Recap), Expert. -->
+        <div class="badges">
+          <span id="private-badge" class="badge private hidden" title="Nothing leaves our own machines">Private</span>
+          <span id="rewind-badge" class="rewind-badge hidden">
+            <span class="badge rewind" title="Clips of this call are uploaded to TwelveLabs">Rewind on</span>
+            <button type="button" id="rewind-recap" class="badge action" aria-label="Recap this call">Recap</button>
+          </span>
+          <span id="expert-badge" class="badge expert hidden" title="A stronger model is checking this answer">Expert</span>
+        </div>
+        <!-- A paired phone (code or remembered): shown so the person knows, with a way to drop it. -->
+        <div id="phone-chip" class="rewind-badge hidden" role="status">
+          <p class="chip glass">Phone joined</p>
+          <button type="button" id="phone-kick" class="chip glass warn-text">Disconnect</button>
+        </div>
+        <p id="link" class="chip glass warn" role="status">Connecting…</p>
+        <p id="notice" class="chip glass soft hidden" role="status"></p>
+        <p id="pipeline" class="pipeline" role="status">Ready</p>
+        <p id="valve-check" class="chip glass hidden" role="status" aria-live="polite"></p>
+        <div id="guide-presenter" class="hidden pipeline">
+          <label><input id="guide-test" type="checkbox"> Presenter checker test mode</label>
+          <strong id="guide-test-label" class="hidden">TEST MODE · simulated valve, no repair proof</strong>
+          <button id="guide-pass" type="button" disabled>Test pass + next</button>
+          <button id="guide-stop" type="button">Test outlet stop</button>
+        </div>
+        <!-- Memory aid: what is remembered today, and the two Forget buttons. -->
+        <div id="memory" class="memory hidden">
+          <button type="button" id="memory-count" class="chip glass soft" aria-expanded="false" aria-controls="memory-actions">Nothing remembered today</button>
+          <div id="memory-actions" class="memory-actions hidden">
+            <button type="button" id="forget-last" class="chip glass">Forget that</button>
+            <button type="button" id="forget-today" class="chip glass warn-text">Forget today</button>
+          </div>
+        </div>
+        <p id="mic-line" class="pipeline mic-line" aria-live="off">Mic off · Default</p>
+      </div>
+      <div class="lower">
+        <!-- WaitCard.swift: progress ring with a percentage while an agent works on an answer. -->
+        <div id="wait-card" class="wait-card glass hidden" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span class="wait-ring" aria-hidden="true"><svg viewBox="0 0 44 44"><circle class="track" cx="22" cy="22" r="22"/><circle id="wait-arc" class="arc" cx="22" cy="22" r="22" pathLength="100" stroke-dasharray="0 100"/></svg><span id="wait-pct">0%</span></span>
+          <span class="wait-text" aria-hidden="true"><span id="wait-eyebrow" class="wait-eyebrow">SCANNING</span><span id="wait-line" class="wait-line">Hold the camera steady…</span></span>
+        </div>
+        <div id="caption" class="caption glass hidden" aria-live="polite">
+          <p class="eyebrow"><span id="caption-eyebrow" aria-hidden="true">A-EYE</span><span id="caption-speaker" class="sr-only">Helper</span></p>
+          <p id="replies" class="caption-text"></p>
+          <p id="error" class="caption-error hidden" role="alert"></p>
+        </div>
+        <!-- ListeningStrip.swift: live mic waveform and what the recogniser has heard so far. -->
+        <div id="listen" class="listen glass hidden" role="status">
+          <canvas id="wave" class="wave" aria-hidden="true"></canvas>
+          <p id="interim" class="listen-text" aria-hidden="true">LISTENING</p>
+        </div>
+        <div id="power-gate" class="power-gate hidden">
+          <button type="button" id="power-off" class="power-btn"><svg aria-hidden="true"><use href="#i-bolt-off"/></svg>Power is off</button>
+          <p>Switch the PSU off and unplug it first.</p>
+        </div>
+        <!-- Rewind on with kept clips: starter questions for the call memory. -->
+        <div id="rewind-ask" class="rewind-ask hidden">
+          <button type="button" id="rewind-chip" class="rewind-ask-chip glass" aria-expanded="false" aria-controls="rewind-prompts"><svg aria-hidden="true"><use href="#i-rewind"/></svg>Rewind</button>
+          <div id="rewind-prompts" class="rewind-prompts hidden" role="group" aria-label="Ask Rewind"></div>
+        </div>
+        <!-- Controls fold into one button at the right edge 3 s after the call starts (and after each use), so the
+             caption keeps the lower part of the screen. The dots button opens them again. -->
+        <div id="controls" class="bottom">
+          <button type="button" id="controls-toggle" class="glass round r56" aria-expanded="true" aria-label="Hide controls" title="Hide controls"><svg><use href="#i-dots"/></svg></button>
+          <button type="button" id="start-camera" class="glass round r56" aria-pressed="false" aria-label="Camera on"><svg><use id="camera-icon" href="#i-camera-off"/></svg></button>
+          <button type="button" id="flip-camera" class="glass round r56" hidden aria-label="Flip camera" title="Flip camera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2h6l2 2h3v12H4zM8 13a4 4 0 0 1 7-1l1 1m0-3v3h-3M16 16a4 4 0 0 1-7 1l-1-1m0 3v-3h3"/></svg></button>
+          <button type="button" id="pair-call" class="glass round r56" aria-label="Use my phone" title="Use my phone (camera + mic)"><svg><use href="#i-phone"/></svg></button>
+          <button type="button" id="mic" class="glass round r56" aria-pressed="false" aria-label="Start microphone"><svg><use id="mic-icon" href="#i-mic-off"/></svg></button>
+          <button type="button" id="end-call" class="round r68 end" aria-label="End call"><svg><use href="#i-phone-down"/></svg></button>
+          <button type="button" id="rewind-btn" class="glass round r56" aria-pressed="false" aria-label="Rewind off" title="Rewind: keep clips of this call to ask about later"><svg><use href="#i-rewind"/></svg></button>
+          <button type="button" id="hold" class="glass round r56" aria-pressed="false" aria-label="Hold to talk" title="Hold to talk (Space)"><svg><use href="#i-hand"/></svg></button>
+          <button type="button" class="glass round r56 open-settings" aria-label="Settings"><svg><use href="#i-gear"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+    <button type="button" id="start-overlay" class="start-overlay glass hidden">Tap to start, then just talk</button>
+
+    <!-- PermissionNotice.swift -->
+    <div id="permission" class="permission hidden" role="alertdialog" aria-labelledby="permission-title">
+      <svg class="permission-icon" aria-hidden="true"><use href="#i-camera"/></svg>
+      <p id="permission-title" class="permission-title">Camera access is off</p>
+      <p id="permission-text" class="permission-text">A-eye looks through the camera to point at parts while you work. Allow the camera for this site in your browser settings.</p>
+      <button type="button" id="permission-retry" class="permission-btn">Try again</button>
+      <button type="button" id="permission-close" class="text-btn">Not now</button>
+    </div>
+  </main>
+
+  <div id="backdrop" class="backdrop hidden"></div>
+
+  <!-- Rewind answer: the kept frame with the object boxed, and the call time. -->
+  <section id="rewind-sheet" class="sheet hidden" tabindex="-1" aria-live="polite" aria-labelledby="rewind-title">
+    <div class="grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <p id="rewind-title" class="sheet-title">Rewind</p>
+      <button type="button" id="rewind-dismiss" class="text-btn">Close</button>
+    </div>
+    <div id="rewind-body"></div>
+  </section>
+
+  <!-- MarketSheet.swift -->
+  <section id="market" class="sheet hidden" tabindex="-1" aria-live="polite" aria-labelledby="market-title">
+    <div class="grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <div>
+        <p class="eyebrow shopper">SHOPPER</p>
+        <p id="market-title" class="sheet-title">Options</p>
+      </div>
+      <button type="button" id="market-dismiss" class="text-btn">Close</button>
+    </div>
+    <div id="market-body" class="market-body"></div>
+  </section>
+
+  <!-- SettingsSheet.swift, plus the web-only voice and mic controls. Simple first; the rest under Advanced. -->
+  <section id="settings" class="sheet hidden" tabindex="-1" aria-labelledby="settings-title">
+    <div class="grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <p id="settings-title" class="sheet-title">Settings</p>
+      <button type="button" id="settings-done" class="text-btn strong">Done</button>
+    </div>
+    <p id="live-start-notice" class="permission-text hidden" role="alert"></p>
+
+    <p class="group-title">Phone camera</p>
+    <div class="group">
+      <button type="button" id="pair-request" class="row text-btn">Use my phone (camera + mic)</button>
+      <div class="pair-out">
+        <p id="pair-status" role="status"></p>
+        <a id="pair-link" class="pair-link"></a>
+        <canvas id="pair-qr" class="pair-qr" hidden aria-label="Phone camera pairing QR code"></canvas>
+      </div>
+    </div>
+    <p class="group-foot">Use your phone as the camera and mic for this call. Scan the code with the phone.</p>
+    <p class="group-title">Works with</p>
+    <div class="group works-with">
+      <p><b>Phone</b> — Open the pairing link or scan the QR; tap Start and remember this phone.</p>
+      <p><b>Laptop</b> — Open A-eye in your browser, start a call and enable camera and mic.</p>
+      <p><b>Raspberry Pi device</b> — Configure the A-eye server address using docs/device.md, then press its button.</p>
+      <p><b>Vision Pro (browser or app)</b> — In Safari open agent.html?device=headset and use your remembered phone; in the native app connect to your A-eye server.</p>
+    </div>
+
+    <p class="group-title">Privacy</p>
+    <div class="group">
+      <label class="row">Private mode <input id="private-toggle" type="checkbox" role="switch" aria-describedby="private-notice"></label>
+      <label class="row"><span>Smarter answers (Claude)<span class="leak">Sends your question and a written scene note, sometimes one small close-up</span></span><input id="cloud-claude" type="checkbox" role="switch"></label>
+      <label class="row"><span>Gemini Live (Google)<span class="leak">In Live and General, sends microphone audio and downscaled camera video to Google</span></span><input id="cloud-google" type="checkbox" role="switch"></label>
+      <label class="row"><span>Natural voice (Cartesia)<span class="leak">Sends only A-eye's reply sentence</span></span><input id="cloud-cartesia" type="checkbox" role="switch"></label>
+      <label class="row"><span>Video memory search (TwelveLabs)<span class="leak">Uploads short silent clips; deleted at call end</span></span><input id="cloud-twelvelabs" type="checkbox" role="switch"></label>
+    </div>
+    <p id="private-notice" class="group-foot">Private mode turns all three off: the local brain answers, Kokoro speaks, speech is recognized on our GPU box, and Rewind stays off.</p>
+    <p class="group-title">What leaves your home</p>
+    <div class="group"><ul id="leaves-list" class="leaves" aria-live="polite"></ul></div>
+
+    <p class="group-title">Rewind</p>
+    <div class="group">
+      <label class="row">Rewind <input id="rewind-toggle" type="checkbox" role="switch" aria-describedby="rewind-notice"></label>
+      <label class="row">Keep clips after the call <input id="rewind-keep" type="checkbox" role="switch"></label>
+      <button type="button" id="rewind-forget" class="row text-btn">Forget this call's clips</button>
+    </div>
+    <p id="rewind-notice" class="group-foot">When on, short video clips of this call are uploaded to TwelveLabs so you can ask about them later. They are deleted from TwelveLabs when the call ends unless you keep them.</p>
+
+    <p class="group-title">Voice</p>
+    <div class="group">
+      <label class="row">Voice <select id="voice-pick" class="voice-pick" aria-label="Voice"></select></label>
+      <div class="row"><button type="button" id="test-voice" class="text-btn">Test voice</button><button type="button" id="mute" class="text-btn" aria-pressed="false">Mute</button></div>
+      <label class="row">Volume <input id="volume" type="range" min="0" max="1" step="0.05" value="1" aria-label="Volume"></label>
+    </div>
+
+    <p class="group-title">Photo</p>
+    <div class="group">
+      <label class="row file-btn">Upload a photo instead of the camera<input id="upload" type="file" accept="image/*"></label>
+    </div>
+
+    <p class="group-title">Memory aid</p>
+    <div class="group">
+      <a id="caregiver-link" class="row text-btn link-row" href="caregiver.html" target="_blank" rel="noopener">Caregiver settings<span aria-hidden="true">›</span></a>
+      <a class="row text-btn link-row" href="signin.html">Sign in or choose Guest<span aria-hidden="true">›</span></a>
+      <a class="row text-btn link-row" href="my-data.html" target="_blank" rel="noopener">My data<span aria-hidden="true">›</span></a>
+    </div>
+    <p class="group-foot">Things and their homes, rooms, and how long to keep. Set it up together.</p>
+
+    <details id="settings-advanced" class="advanced">
+      <summary class="advanced-summary">Advanced</summary>
+      <p class="group-title">Devices</p>
+      <div class="group">
+        <button type="button" id="devices-allow" class="row text-btn hidden">Allow access to see devices</button>
+        <label class="row">Microphone <select id="mic-pick" class="voice-pick" aria-label="Microphone"></select></label>
+        <div class="row"><span>Level</span><span class="level" role="meter" aria-label="Microphone level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="mic-level"></span></span></div>
+        <label class="row">Camera <select id="camera-pick" class="voice-pick" aria-label="Camera"></select></label>
+        <label id="speaker-row" class="row hidden">Speaker <select id="speaker-pick" class="voice-pick" aria-label="Speaker"></select></label>
+      </div>
+      <p id="devices-foot" class="group-foot">Speak and watch the level bar to see which mic hears you.</p>
+      <p class="group-title">Microphone</p>
+      <div class="group">
+        <label class="row">Sensitivity <input id="sensitivity" type="range" min="1" max="10" step="1" value="5" aria-label="Speech sensitivity"></label>
+        <p class="row"><span>Recognition</span><span id="stt-mode" class="mono dim">Browser</span></p>
+        <p class="row"><span>Room noise</span><span id="ambient" class="mono dim" aria-live="off">Noise --</span></p>
+      </div>
+      <p class="group-title">Connection</p>
+      <div class="group">
+        <p id="conn-status" class="row">Not in a call</p>
+        <p id="server-host" class="row mono"></p>
+      </div>
+      <p class="group-foot">The web page always talks to the server that served it.</p>
+      <p class="group-title">Transcript</p>
+      <div class="group">
+        <button type="button" id="transcript-toggle" class="row text-btn" aria-expanded="false" aria-controls="transcript-list">Transcript</button>
+        <ol id="transcript-list" class="transcript-list hidden"></ol>
+      </div>
+    </details>
+    <p class="group-foot sheet-foot">Camera frames go to this server and are not saved unless Rewind or the memory aid is on. Outside Private mode, the cloud model may see a small crop of the picture.</p>
+  </section>
+
+  <script type="module" src="agent.js"></script>
+</body>
+</html>

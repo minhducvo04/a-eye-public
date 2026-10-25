@@ -1,0 +1,7 @@
+// Base build settings for the AEye target. Committed.
+// AEYE_SERVER_URL is empty by default (the app then shows a "Set server" chip).
+// Local.xcconfig (git-ignored, optional) overrides it; copy Local.xcconfig.example to create it.
+DEVELOPMENT_TEAM =
+AEYE_SERVER_URL =
+
+#include? "Local.xcconfig"
